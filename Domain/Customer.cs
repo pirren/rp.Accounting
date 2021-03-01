@@ -9,7 +9,7 @@ namespace rp.Accounting.Domain
         public string LastName { get; set; }
         public string Address { get; set; }
         public string Email { get; set; }
-        public double HourlyPrice { get; private set; }
+        public double? HourlyPrice { get; private set; }
         public CustomerType Type { get; private set; }
         public DateTime Registered { get; } = DateTime.Now;
 

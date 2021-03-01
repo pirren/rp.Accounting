@@ -24,6 +24,9 @@ namespace rp.Accounting.DataAccess
             cust.Property(p => p.FirstName).IsRequired();
             cust.Property(p => p.Type).IsRequired();
             cust.Property(p => p.Email).IsRequired();
+            cust.Property(p => p.Type).HasConversion<string>();
+
+            modelBuilder.Seed();
         }
 
         public class RpContextFactory : IDesignTimeDbContextFactory<RpContext>
@@ -31,7 +34,7 @@ namespace rp.Accounting.DataAccess
             public RpContext CreateDbContext(string[] args)
             {
                 var optionsBuilder = new DbContextOptionsBuilder<RpContext>();
-                optionsBuilder.UseSqlite("Data Source=rp.Accounting.db")
+                optionsBuilder.UseSqlite("Data Source=../App/rp.Accounting.db")
                     .EnableSensitiveDataLogging();
 
                 return new RpContext(optionsBuilder.Options);

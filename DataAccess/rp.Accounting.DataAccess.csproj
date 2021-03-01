@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\rp.Accounting.Domain\rp.Accounting.Domain.csproj" />
+    <ProjectReference Include="..\Domain\rp.Accounting.Domain.csproj" />
   </ItemGroup>
 
 </Project>
