@@ -20,7 +20,7 @@ namespace rp.Accounting.DataAccess
                 LastName = "Bängman",
                 Address = "Gördelmakaregatan 18",
                 Email = "bängen@hotmail.com",
-                HourlyPrice = 352.0,
+                HourlyFee = 352.0,
                 Type = CustomerType.Private,
                 Registered = DateTime.Parse("2020-02-01")
             }, 
@@ -31,7 +31,7 @@ namespace rp.Accounting.DataAccess
                 LastName = "Bertram",
                 Address = "Karduansvägen 23",
                 Email = "karbert@yahoo.com",
-                HourlyPrice = 352.0,
+                HourlyFee = 352.0,
                 Type = CustomerType.Private,
                 Registered = DateTime.Parse("2018-11-21")
             },
@@ -42,7 +42,7 @@ namespace rp.Accounting.DataAccess
                 LastName = "Kroon",
                 Address = "Apelsingatan 42",
                 Email = "einstein@apelsin.nu",
-                HourlyPrice = 352.0,
+                HourlyFee = 352.0,
                 Type = CustomerType.Private,
                 Registered = DateTime.Parse("2018-04-08")
             },
