@@ -6,6 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using rp.Accounting.App.Infrastructure;
+using rp.Accounting.App.Infrastructure.Interfaces;
+using rp.Accounting.App.Services;
+using rp.Accounting.App.Services.Interfaces;
 using rp.Accounting.DataAccess;
 
 namespace rp.Accounting.App
@@ -25,6 +29,8 @@ namespace rp.Accounting.App
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<ICustomerService, CustomerService>();
             services.AddDbContext<RpContext>(opt => opt.UseSqlite("Data Source=rp.Accounting.db"));
         }
 
@@ -44,9 +50,7 @@ namespace rp.Accounting.App
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();
@@ -63,8 +67,8 @@ namespace rp.Accounting.App
         {
             var browserWindow = await Electron.WindowManager.CreateWindowAsync(new BrowserWindowOptions
             {
-                Width = 1152,
-                Height = 940,
+                Width = 1600,
+                Height = 900,
                 Show = false
             });
             await browserWindow.WebContents.Session.ClearCacheAsync();

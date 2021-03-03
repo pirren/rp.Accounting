@@ -4,28 +4,38 @@
 
 <p>This component demonstrates fetching data from a service.</p>
 
+@if(Customers != null)
+{
+
 <table class="table">
     <thead>
         <tr>
-            <th>Date</th>
-            <th>Temp. (C)</th>
-            <th>Temp. (F)</th>
-            <th>Summary</th>
+            <th>Namn</th>
+            <th>Address</th>
+            <th>E-Post</th>
+            <th>Timpris</th>
         </tr>
     </thead>
     <tbody>
-        @for (int i = 0; i < 5; i++)
+        @foreach (var customer in Customers)
         {
         <tr>
-            <td>@DateTime.Now.ToShortDateString()</td>
-            <td>23 C</td>
-            <td>40 F</td>
-            <td>Warm</td>
+            <td>@($"{customer.FirstName} {customer.LastName}")</td>
+            <td>@customer.Address</td>
+            <td>@customer.Email</td>
+            <td>@customer.HourlyFee</td>
         </tr>
         }
     </tbody>
 </table>
 
+}
 @code {
+    [Inject] ICustomerService CustomerService { get; set; }
+    protected CustomerInfo[] Customers;
 
+    protected async override Task OnInitializedAsync()
+    {
+        Customers = await CustomerService.GetPrivateCustomersAsync();
+    }
 }

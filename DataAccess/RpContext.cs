@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using rp.Accounting.Domain;
-using System;
 
 namespace rp.Accounting.DataAccess
 {

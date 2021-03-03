@@ -1,10 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using rp.Accounting.Domain;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace rp.Accounting.DataAccess
 {
@@ -25,7 +21,7 @@ namespace rp.Accounting.DataAccess
                 HourlyFee = 352.0,
                 Type = CustomerType.Private,
                 Registered = DateTime.Parse("2020-02-01")
-            }, 
+            },
             new
             {
                 Id = 2,
