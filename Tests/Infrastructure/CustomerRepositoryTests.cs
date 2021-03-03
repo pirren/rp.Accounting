@@ -15,13 +15,19 @@ namespace rp.Accounting.Tests.Infrastructure
 {
     public class CustomerRepositoryTests
     {
+        private readonly SeedHelper seedHelper;
+        public CustomerRepositoryTests()
+        {
+            this.seedHelper = new SeedHelper();
+        }
+
         #region GetAllCustomers Tests
         [Fact]
         public async Task GetAllCustomers_PopulatedDbSet_ReturnsExpectedObjects()
         {
             // arrange
             var ctx = new Mock<RpContext>();
-            var customers = new List<Customer>().GetQueryableMockSet();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
             ctx.Setup(s => s.Customers).ReturnsDbSet(customers);
             var repo = new CustomerRepository(ctx.Object);
 
@@ -56,7 +62,7 @@ namespace rp.Accounting.Tests.Infrastructure
         {
             // arrange
             var ctx = new Mock<RpContext>();
-            var customers = new List<Customer>().GetQueryableMockSet();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
             customers.First().Active = false;
             ctx.Setup(s => s.Customers).ReturnsDbSet(customers);
             var repo = new CustomerRepository(ctx.Object);
@@ -77,7 +83,7 @@ namespace rp.Accounting.Tests.Infrastructure
         {
             // arrange
             var ctx = new Mock<RpContext>();
-            var customers = new List<Customer>().GetQueryableMockSet();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
             ctx.Setup(s => s.Customers).ReturnsDbSet(customers);
             var repo = new CustomerRepository(ctx.Object);
 
@@ -112,7 +118,7 @@ namespace rp.Accounting.Tests.Infrastructure
         {
             // arrange
             var ctx = new Mock<RpContext>();
-            var customers = new List<Customer>().GetQueryableMockSet();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
             customers.First(f => f.Type == CustomerType.Private).Active = false;
             ctx.Setup(s => s.Customers).ReturnsDbSet(customers);
             var repo = new CustomerRepository(ctx.Object);
@@ -134,7 +140,7 @@ namespace rp.Accounting.Tests.Infrastructure
         {
             // arrange
             var ctx = new Mock<RpContext>();
-            var customers = new List<Customer>().GetQueryableMockSet();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
             ctx.Setup(s => s.Customers).ReturnsDbSet(customers);
             var repo = new CustomerRepository(ctx.Object);
 
@@ -169,7 +175,7 @@ namespace rp.Accounting.Tests.Infrastructure
         {
             // arrange
             var ctx = new Mock<RpContext>();
-            var customers = new List<Customer>().GetQueryableMockSet();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
             customers.First(f => f.Type == CustomerType.Company).Active = false;
             ctx.Setup(s => s.Customers).ReturnsDbSet(customers);
             var repo = new CustomerRepository(ctx.Object);
@@ -183,15 +189,15 @@ namespace rp.Accounting.Tests.Infrastructure
             Assert.All(result, res => Assert.True(res.Active));
             Assert.True(result.Length == companyCount - 1);
         }
-        #endregion        
-        
-        #region GetCompanyCustomers Tests
+        #endregion
+
+        #region GetCustomerById Tests
         [Fact]
         public async Task GetCustomerById_ExistingId_ReturnsExpectedObject()
         {
             // arrange
             var ctx = new Mock<RpContext>();
-            var customers = new List<Customer>().GetQueryableMockSet();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
             ctx.Setup(s => s.Customers).ReturnsDbSet(customers);
             var repo = new CustomerRepository(ctx.Object);
 
@@ -209,7 +215,7 @@ namespace rp.Accounting.Tests.Infrastructure
         {
             // arrange
             var ctx = new Mock<RpContext>();
-            var customers = new List<Customer>().GetQueryableMockSet();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
             ctx.Setup(s => s.Customers).ReturnsDbSet(customers);
             var repo = new CustomerRepository(ctx.Object);
 

@@ -7,20 +7,20 @@ using System.Threading.Tasks;
 
 namespace rp.Accounting.Tests.TestHelpers
 {
-    public static class SeedHelper
+    public class SeedHelper
     {
-        public static List<Customer> GetQueryableMockSet(this List<Customer> customers)
-        => new List<Customer>()
-        {
-            new Customer(1, "Pelle", CustomerType.Private),
-            new Customer(2, "Martina", CustomerType.Private),
-            new Customer(3, "Gunde", CustomerType.Private),
-            new Customer(4, "Sverker", CustomerType.Private),
-            new Customer(5, "Carina", CustomerType.Private),
-            new Customer(6, "Homer", CustomerType.Private),
-            new Customer(7, "Lisa", CustomerType.Private),
-            new Customer(8, "Apple Göteborg", CustomerType.Company),
-            new Customer(9, "Grönsaksboden i Solna", CustomerType.Company)
-        };
+        public List<Customer> GetQueryableCustomerMockSet()
+            => new List<Customer>()
+            {
+                new Customer(1, "Pelle", CustomerType.Private),
+                new Customer(2, "Martina", CustomerType.Private),
+                new Customer(3, "Gunde", CustomerType.Private),
+                new Customer(4, "Sverker", CustomerType.Private),
+                new Customer(5, "Carina", CustomerType.Private),
+                new Customer(6, "Homer", CustomerType.Private),
+                new Customer(7, "Lisa", CustomerType.Private),
+                new Customer(8, "Apple Göteborg", CustomerType.Company),
+                new Customer(9, "Grönsaksboden i Solna", CustomerType.Company)
+            };
     }
 }
