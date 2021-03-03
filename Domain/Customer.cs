@@ -9,7 +9,7 @@ namespace rp.Accounting.Domain
         public string LastName { get; set; }
         public string Address { get; set; }
         public string Email { get; set; }
-        public bool Active { get; private set; } = true;
+        public bool Active { get; set; } = true;
         public double? HourlyFee { get; private set; }
         public CustomerType Type { get; private set; }
         public DateTime Registered { get; } = DateTime.Now;
@@ -30,14 +30,6 @@ namespace rp.Accounting.Domain
             if (this.Type == CustomerType.Company)
                 return;
             this.HourlyFee = hourlyFee;
-        }
-
-        /// <summary>
-        /// Inactivates a customer, won't show up in a dispatch
-        /// </summary>
-        public void Inactivate()
-        {
-            this.Active = false;
         }
     }
 
