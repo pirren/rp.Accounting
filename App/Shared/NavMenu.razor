@@ -1,5 +1,5 @@
 ﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">rp.Accounting.App</a>
+    <div class="brand-name">rent <span>personligt</span></div>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -8,18 +8,28 @@
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+            <NavLink class="nav-link" href="dispatch/private">
+                <span class="oi oi-document" aria-hidden="true"></span> Underlag Privat
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
+            <NavLink class="nav-link" href="dispatch/company">
+                <span class="oi oi-document" aria-hidden="true"></span> Underlag Företag
+            </NavLink>
+        </li>
+        <li class="nav-item px-3 mb-3">
+            <NavLink class="nav-link" href="dispatch/article">
+                <span class="oi oi-document" aria-hidden="true"></span> Underlag Artiklar
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+            <NavLink class="nav-link" href="customer/all">
+                <span class="oi oi-people" aria-hidden="true"></span> Kundregister
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="customer/add">
+                <span class="oi oi-plus" aria-hidden="true"></span> Lägg till kund
             </NavLink>
         </li>
     </ul>

@@ -1,4 +1,5 @@
 ﻿using rp.Accounting.App.Models.InfoModels;
+using rp.Accounting.App.Models.RequestModels;
 using rp.Accounting.Domain;
 
 namespace rp.Accounting.App.Models
@@ -24,6 +25,7 @@ namespace rp.Accounting.App.Models
         public static CustomerInfo ToDto(this Customer c)
         => new CustomerInfo
         {
+            Id = c.Id.ToString(),
             Active = c.Active,
             Address = c.Address,
             Email = c.Email,
@@ -31,6 +33,17 @@ namespace rp.Accounting.App.Models
             LastName = c.LastName,
             HourlyFee = c.HourlyFee,
             Type = c.Type.EnumToString()
+        };
+        public static CustomerRequest ToRequest(this CustomerInfo c)
+        => new CustomerRequest
+        {
+            Active = c.Active,
+            Address = c.Address,
+            Email = c.Email,
+            FirstName = c.FirstName,
+            LastName = c.LastName,
+            HourlyFee = c.HourlyFee,
+            Type = c.Type
         };
         #endregion
     }

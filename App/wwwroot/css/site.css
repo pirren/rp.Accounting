@@ -4,6 +4,13 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+/*override boostrap*/
+.table td, .table th {
+    padding: .5rem;
+    vertical-align: top;
+}
+.table td { vertical-align: middle; }
+
 a, .btn-link {
     color: #0366d6;
 }

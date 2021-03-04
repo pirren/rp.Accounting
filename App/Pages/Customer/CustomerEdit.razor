@@ -1,0 +1,16 @@
+﻿@page "/customer/edit"
+@page "/customer/edit/{CustomerId}"
+
+<h3>@PageTitle</h3>
+
+@code {
+    [Parameter] public string CustomerId { get; set; }
+
+    protected string PageTitle;
+
+    protected async override Task OnInitializedAsync()
+    {
+        PageTitle = string.IsNullOrEmpty(CustomerId) ? "Lägg till kund" : "Redigera kund";
+            
+    }
+}

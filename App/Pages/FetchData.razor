@@ -28,14 +28,15 @@
         }
     </tbody>
 </table>
-
 }
+
 @code {
     [Inject] ICustomerService CustomerService { get; set; }
     protected CustomerInfo[] Customers;
 
     protected async override Task OnInitializedAsync()
     {
-        Customers = await CustomerService.GetPrivateCustomersAsync();
+        var response = await CustomerService.GetPrivateCustomersAsync();
+        if (response.Success) Customers = response.Entity;
     }
 }

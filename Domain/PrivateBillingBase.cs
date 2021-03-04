@@ -37,11 +37,16 @@ namespace rp.Accounting.Domain
             return true;
         }
 
-        public PrivateBillingBaseItem(int id, PrivateBillingBase billingBase, Customer customer)
+        public PrivateBillingBaseItem()
+        {
+
+        }
+
+        public PrivateBillingBaseItem(int id, PrivateBillingBase privateBillingBase, Customer customer)
         {
             Id = id;
             Customer = customer;
-            PrivateBillingBase = billingBase;
+            PrivateBillingBase = privateBillingBase;
         }
     }
 }

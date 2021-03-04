@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace rp.Accounting.Domain
 {
@@ -13,6 +14,7 @@ namespace rp.Accounting.Domain
         public double? HourlyFee { get; private set; }
         public CustomerType Type { get; private set; }
         public DateTime Registered { get; } = DateTime.Now;
+        public ICollection<PrivateBillingBaseItem> Items { get; set; }
 
         public Customer(int id, string firstName, CustomerType type)
         {
