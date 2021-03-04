@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace rp.Accounting.App.Infrastructure.Interfaces
 {
-    public interface ICustomerRepository
+    public interface ICustomerRepository : IBaseRepository
     {
         IQueryable<Customer> GetAllCustomers();
         IQueryable<Customer> GetPrivateCustomers();

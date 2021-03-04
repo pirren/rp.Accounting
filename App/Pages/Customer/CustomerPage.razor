@@ -1,7 +1,7 @@
 ﻿@page "/customer/all"
 
-<h3>Kunder</h3>
-<PageInfo Content="Både privata och företagskunder visas här. För att ta bort eller redigera en kund, klicka på redigera i slutet på namnet." />
+<h3>Alla kunder</h3>
+<PageInfo Content="Både privata och företagskunder visas här. För att ta bort eller redigera en kund, klicka på den blå knappen i slutet på av raden." />
 
 @if (Customers != null)
 {
@@ -22,10 +22,10 @@
                 <tr>
                     <td>@customer.FirstName</td>
                     <td>@customer.LastName</td>
-                    <td><address>@customer.Address</address></td>
+                    <td>@customer.Address</td>
                     <td>@customer.Email</td>
-                    <td>@customer.HourlyFee</td>
-                    <td><a class="btn btn-sm btn-primary" href="customer/edit/@customer.Id">Redigera <i class="oi oi-pencil ml-1"></i></a></td>
+                    <td>@(customer.HourlyFee == null ? "~" : customer.HourlyFee)</td>
+                    <td><a class="btn btn-sm btn-primary" href="customer/edit/@customer.Id"><i class="oi oi-pencil"></i></a></td>
                 </tr>
             }
         </tbody>
@@ -37,7 +37,10 @@
 
     protected async override Task OnInitializedAsync()
     {
-        var response = await CustomerService.GetPrivateCustomersAsync();
-        if (response.Success) Customers = response.Entity;
+        var response = await CustomerService.GetAllCustomersAsync();
+        if (response.Success)
+        {
+            Customers = response.Entity;
+        }
     }
 }

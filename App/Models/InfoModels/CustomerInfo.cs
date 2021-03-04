@@ -12,6 +12,6 @@ namespace rp.Accounting.App.Models.InfoModels
         public bool Active { get; set; }
         public double? HourlyFee { get; set; }
         public string Type { get; set; }
-        public DateTime Registered { get; } 
+        public DateTime Registered { get; }
     }
 }

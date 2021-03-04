@@ -1,4 +1,5 @@
 ﻿using rp.Accounting.App.Models.InfoModels;
+using rp.Accounting.App.Models.RequestModels;
 using rp.Accounting.App.Services.Communication;
 using System.Threading.Tasks;
 
@@ -10,5 +11,6 @@ namespace rp.Accounting.App.Services.Interfaces
         Task<ServiceResponse<CustomerInfo[]>> GetPrivateCustomersAsync();
         Task<ServiceResponse<CustomerInfo[]>> GetCompanyCustomersAsync();
         Task<ServiceResponse<CustomerInfo>> GetCustomerByIdAsync(int id);
+        Task<ServiceResponse<object>> UpdateCustomerAsync(int id, CustomerRequest request);
     }
 }

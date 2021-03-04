@@ -6,7 +6,6 @@ using rp.Accounting.DataAccess;
 using rp.Accounting.Domain;
 using rp.Accounting.Tests.TestHelpers;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;

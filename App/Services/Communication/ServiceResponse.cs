@@ -14,6 +14,12 @@
         }
 
         /// <summary>
+        /// Creates a custom response without entity
+        /// </summary>
+        public ServiceResponse(bool success, ServiceCode code) : this(success, code, null)
+        { }
+
+        /// <summary>
         /// Creates a 200 response
         /// </summary>
         /// <param name="entity"></param>

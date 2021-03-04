@@ -6,13 +6,10 @@ using System.Linq;
 
 namespace rp.Accounting.App.Infrastructure
 {
-    public class CustomerRepository : ICustomerRepository
+    public class CustomerRepository : BaseRepository, ICustomerRepository
     {
-        private readonly RpContext ctx;
-        public CustomerRepository(RpContext ctx)
-        {
-            this.ctx = ctx;
-        }
+        public CustomerRepository(RpContext ctx) : base(ctx)
+        { }
 
         public IQueryable<Customer> GetAllCustomers()
         {

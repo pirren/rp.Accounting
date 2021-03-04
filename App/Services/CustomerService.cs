@@ -2,6 +2,7 @@
 using rp.Accounting.App.Infrastructure.Interfaces;
 using rp.Accounting.App.Models;
 using rp.Accounting.App.Models.InfoModels;
+using rp.Accounting.App.Models.RequestModels;
 using rp.Accounting.App.Services.Communication;
 using rp.Accounting.App.Services.Interfaces;
 using System.Linq;
@@ -59,6 +60,31 @@ namespace rp.Accounting.App.Services
             if (result.Length > 0)
                 return new ServiceResponse<CustomerInfo[]>(result);
             else return new ServiceResponse<CustomerInfo[]>(ServiceCode.NoContent);
+        }
+
+        public async Task<ServiceResponse<object>> UpdateCustomerAsync(int id, CustomerRequest request)
+        {
+            var existingCustomer = await repo.GetCustomerById(id).FirstOrDefaultAsync();
+            if (existingCustomer == null)
+                return new ServiceResponse<object>(false, ServiceCode.NotFound);
+
+            existingCustomer.FirstName = request.FirstName;
+            existingCustomer.Address = request.Address;
+            existingCustomer.Email = request.Email;
+            if(request.TypeIsPrivate)
+            {
+                if (double.TryParse(request.HourlyFee, out double hourly))
+                    existingCustomer.UpdateHourlyPrice(hourly);
+                existingCustomer.LastName = request.LastName;
+            }
+
+            try
+            {
+                repo.Update(existingCustomer);
+                if (await repo.CompleteAsync())
+                    return new ServiceResponse<object>(true, ServiceCode.Ok);
+            } catch { return new ServiceResponse<object>(false, ServiceCode.InternalServerError); }
+            return new ServiceResponse<object>(false, ServiceCode.InternalServerError);
         }
     }
 }

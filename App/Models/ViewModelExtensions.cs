@@ -42,7 +42,7 @@ namespace rp.Accounting.App.Models
             Email = c.Email,
             FirstName = c.FirstName,
             LastName = c.LastName,
-            HourlyFee = c.HourlyFee,
+            HourlyFee = c.HourlyFee.ToString() ?? "",
             Type = c.Type
         };
         #endregion

@@ -1,16 +1,90 @@
-﻿@page "/customer/edit"
-@page "/customer/edit/{CustomerId}"
+﻿@page "/customer/edit/{CustomerId}"
 
-<h3>@PageTitle</h3>
+<h3>Ändra kunduppgifter</h3>
+@if (Request == null)
+{
+    <text>Inga kunduppgifter har hittats.</text>
+}
+else if (Request.Active)
+{
+    <EditForm Model="@Request" OnValidSubmit="(async () => await TryPost())">
+        <DataAnnotationsValidator />
+        <div class="form-group">
+            <label for="FirstName">Förnamn:</label>
+            <InputText @bind-Value="@Request.FirstName" class="form-control" id="FirstName" placeholder="Förnamn" />
+            <small id="FirstNameHelp" class="form-text text-muted">För företagskunder ange företagsnamnet.</small>
+            <ValidationMessage For="@(() => Request.FirstName)" />
+        </div>
+        @if (Request.TypeIsPrivate)
+        {
+            <div class="form-group">
+                <label for="LastName">Efternamn:</label>
+                <InputText @bind-Value="@Request.LastName" class="form-control" id="LastName" placeholder="Efternamn" />
+                <small id="LastNameHelp" class="form-text text-muted">Kundens efternamn.</small>
+                <ValidationMessage For="@(() => Request.LastName)" />
+            </div>
+        }
+        <div class="form-group">
+            <label for="Address">Address:</label>
+            <InputText @bind-Value="@Request.Address" class="form-control" id="Address" placeholder="Address" />
+            <small id="AddressHelp" class="form-text text-muted">Address kund eller företag.</small>
+            <ValidationMessage For="@(() => Request.Address)" />
+        </div>
+        <div class="form-group">
+            <label for="Email">E-mail:</label>
+            <InputText @bind-Value="@Request.Email" class="form-control" id="Email" placeholder="E-mail" />
+            <small id="EmailHelp" class="form-text text-muted">E-mail för kund eller företag.</small>
+            <ValidationMessage For="@(() => Request.Email)" />
+        </div>
+        @if (Request.TypeIsPrivate)
+        {
+            <div class="form-group">
+                <label for="HourlyFee">Timpris:</label>
+                <InputText @bind-Value="@Request.HourlyFee" class="form-control" id="HourlyFee" placeholder="Timpris" />
+                <small id="HourlyFeeHelp" class="form-text text-muted">Anges inte för företag.</small>
+                <ValidationMessage For="@(() => Request.HourlyFee)" />
+            </div>
+        }
 
+        <div class="form-group">
+            <button type="submit" class="btn btn-success btn-block">Spara förändringar <i class="oi oi-check"></i></button>
+        </div>
+    </EditForm>
+}
+else
+{
+    <span>Kunden är inte aktiv.</span>
+}
 @code {
     [Parameter] public string CustomerId { get; set; }
+    [Inject] ICustomerService CustomerService { get; set; }
+    [Inject] NavigationManager Nav { get; set; }
 
-    protected string PageTitle;
+    private CustomerRequest Request;
+    private int id;
 
     protected async override Task OnInitializedAsync()
     {
-        PageTitle = string.IsNullOrEmpty(CustomerId) ? "Lägg till kund" : "Redigera kund";
-            
+        if (!int.TryParse(CustomerId, out id))
+            Nav.NavigateTo("customer/all");
+
+        var result = await CustomerService.GetCustomerByIdAsync(id);
+        if (result.Success)
+            Request = result.Entity.ToRequest();
+        else
+            Nav.NavigateTo("customer/all"); // todo: log an error
+    }
+
+    private async Task TryPost()
+    {
+        var result = await CustomerService.UpdateCustomerAsync(id, Request);
+        if(result.Success)
+        {
+            Nav.NavigateTo("customer/all"); // todo: need toast here
+        }
+        else
+        {
+            Nav.NavigateTo("customer/all"); // todo: need toast here
+        }
     }
 }
