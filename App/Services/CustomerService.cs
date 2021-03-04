@@ -2,8 +2,8 @@
 using rp.Accounting.App.Infrastructure.Interfaces;
 using rp.Accounting.App.Models;
 using rp.Accounting.App.Models.InfoModels;
+using rp.Accounting.App.Services.Communication;
 using rp.Accounting.App.Services.Interfaces;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,31 +17,48 @@ namespace rp.Accounting.App.Services
             this.repo = repo;
         }
 
-        public async Task<CustomerInfo[]> GetAllCustomersAsync()
+        public async Task<ServiceResponse<CustomerInfo[]>> GetAllCustomersAsync()
         {
-            throw new NotImplementedException();
+            var result = await repo.GetAllCustomers()
+                .Select(c => c.ToDto())
+                .ToArrayAsync();
+
+            if (result.Length > 0)
+                return new ServiceResponse<CustomerInfo[]>(result);
+            else return new ServiceResponse<CustomerInfo[]>(ServiceCode.NoContent);
         }
 
-        public async Task<CustomerInfo[]> GetCompanyCustomersAsync()
+        public async Task<ServiceResponse<CustomerInfo[]>> GetCompanyCustomersAsync()
         {
-            throw new NotImplementedException();
+            var result = await repo.GetCompanyCustomers()
+                .Select(c => c.ToDto())
+                .ToArrayAsync();
+
+            if (result.Length > 0)
+                return new ServiceResponse<CustomerInfo[]>(result);
+            else return new ServiceResponse<CustomerInfo[]>(ServiceCode.NoContent);
         }
 
-        public async Task<CustomerInfo[]> GetCustomerByIdAsync(int id)
+        public async Task<ServiceResponse<CustomerInfo>> GetCustomerByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var result = await repo.GetCustomerById(id)
+                .Select(s => s.ToDto())
+                .FirstOrDefaultAsync();
+
+            if (result == null)
+                return new ServiceResponse<CustomerInfo>(ServiceCode.NotFound);
+            else return new ServiceResponse<CustomerInfo>(result);
         }
 
-        public async Task<CustomerInfo[]> GetPrivateCustomersAsync()
-            => await repo.GetPrivateCustomers().Select(c => new CustomerInfo
-            {
-                Active = c.Active,
-                Address = c.Address,
-                Email = c.Email,
-                FirstName = c.FirstName,
-                LastName = c.LastName,
-                HourlyFee = c.HourlyFee,
-                Type = c.Type.EnumToString()
-            }).ToArrayAsync();
+        public async Task<ServiceResponse<CustomerInfo[]>> GetPrivateCustomersAsync()
+        {
+            var result = await repo.GetPrivateCustomers()
+                .Select(c => c.ToDto())
+                .ToArrayAsync();
+
+            if (result.Length > 0)
+                return new ServiceResponse<CustomerInfo[]>(result);
+            else return new ServiceResponse<CustomerInfo[]>(ServiceCode.NoContent);
+        }
     }
 }

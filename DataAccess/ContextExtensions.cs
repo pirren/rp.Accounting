@@ -73,7 +73,7 @@ namespace rp.Accounting.DataAccess
             pbb.HasData(new
             {
                 Id = 1,
-                Date = DateTime.Now.AddMonths(-1)
+                Date = DateTime.Parse("2021-01-04")
             });
             #endregion
 

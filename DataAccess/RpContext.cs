@@ -33,6 +33,8 @@ namespace rp.Accounting.DataAccess
 
             var pbbi = modelBuilder.Entity<PrivateBillingBaseItem>();
             pbbi.HasKey(p => p.Id);
+            pbbi.Property(p => p.PrivateBillingBase).IsRequired();
+            pbbi.Property(p => p.Customer).IsRequired();
             pbbi.HasOne(p => p.PrivateBillingBase)
                 .WithMany(p => p.Items)
                 .OnDelete(DeleteBehavior.Cascade);
