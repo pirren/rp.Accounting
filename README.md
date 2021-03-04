@@ -3,7 +3,7 @@
 
 En bokföringsapplikation som kör cross platform Blazor Desktop via Electron. Appen använder ett integrerat API, SQLite för datalagring och domän designad kod.
 
-Använder kommandon: 
+Användning och kompileringskommandon: 
 ```
 electronize init
 electronize start
