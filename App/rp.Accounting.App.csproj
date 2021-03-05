@@ -14,7 +14,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Pages\Dispatch\" />
-  </ItemGroup>
 </Project>
