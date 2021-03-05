@@ -25,6 +25,7 @@ namespace rp.Accounting.DataAccess
             cust.Property(p => p.FirstName).IsRequired();
             cust.Property(p => p.Type).IsRequired();
             cust.Property(p => p.Email).IsRequired();
+            cust.Property(p => p.Registered).IsRequired();
             cust.Property(p => p.Type).HasConversion<string>();
 
             var pbb = modelBuilder.Entity<PrivateBillingBase>();

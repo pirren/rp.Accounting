@@ -1,5 +1,7 @@
-﻿using rp.Accounting.App.Infrastructure.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using rp.Accounting.App.Infrastructure.Interfaces;
 using rp.Accounting.DataAccess;
+using rp.Accounting.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +28,12 @@ namespace rp.Accounting.App.Infrastructure
             return await ctx.SaveChangesAsync() > 0;
         }
 
+        public void DetachLocal<T>(T entity) where T : class, IIdentifier
+        {
+            var local = ctx.Set<T>().Local.FirstOrDefault(entry => entry.Id.Equals(entity.Id));
+            if (local != null) ctx.Entry(local).State = EntityState.Detached;
+        }
+
         public void Remove<T>(T entity) where T : class
         {
             ctx.Remove(entity);
@@ -33,7 +41,7 @@ namespace rp.Accounting.App.Infrastructure
 
         public void Update<T>(T entity) where T : class
         {
-            ctx.Update(entity);
+            ctx.Entry(entity).State = EntityState.Modified;
         }
     }
 }

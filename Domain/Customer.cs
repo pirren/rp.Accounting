@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace rp.Accounting.Domain
 {
-    public class Customer
+    public class Customer : IIdentifier
     {
         public int Id { get; private set; }
         public string FirstName { get; set; }

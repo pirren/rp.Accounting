@@ -59,6 +59,7 @@ else
     [Parameter] public string CustomerId { get; set; }
     [Inject] ICustomerService CustomerService { get; set; }
     [Inject] NavigationManager Nav { get; set; }
+    [Inject] IToastService ToastService { get; set; }
 
     private CustomerRequest Request;
     private int id;
@@ -78,13 +79,10 @@ else
     private async Task TryPost()
     {
         var result = await CustomerService.UpdateCustomerAsync(id, Request);
-        if(result.Success)
-        {
-            Nav.NavigateTo("customer/all"); // todo: need toast here
-        }
+        if (result.Success)
+            ToastService.ShowSuccess("Ändringarna sparade!");
         else
-        {
-            Nav.NavigateTo("customer/all"); // todo: need toast here
-        }
+            ToastService.ShowError("Något verkar ha gått snett.");
+        Nav.NavigateTo("customer/all"); 
     }
 }

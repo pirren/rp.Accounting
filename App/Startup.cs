@@ -11,6 +11,7 @@ using rp.Accounting.App.Infrastructure.Interfaces;
 using rp.Accounting.App.Services;
 using rp.Accounting.App.Services.Interfaces;
 using rp.Accounting.DataAccess;
+using Blazored.Toast;
 
 namespace rp.Accounting.App
 {
@@ -29,6 +30,7 @@ namespace rp.Accounting.App
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddBlazoredToast();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddDbContext<RpContext>(opt => opt.UseSqlite("Data Source=rp.Accounting.db"));

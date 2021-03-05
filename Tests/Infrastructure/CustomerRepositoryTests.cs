@@ -15,10 +15,7 @@ namespace rp.Accounting.Tests.Infrastructure
     public class CustomerRepositoryTests
     {
         private readonly SeedHelper seedHelper;
-        public CustomerRepositoryTests()
-        {
-            this.seedHelper = new SeedHelper();
-        }
+        public CustomerRepositoryTests() => this.seedHelper = new SeedHelper();
 
         #region GetAllCustomers Tests
         [Fact]

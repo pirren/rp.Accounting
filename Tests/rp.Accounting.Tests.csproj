@@ -24,8 +24,4 @@
     <ProjectReference Include="..\App\rp.Accounting.App.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
-
 </Project>

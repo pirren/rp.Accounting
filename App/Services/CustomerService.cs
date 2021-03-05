@@ -5,6 +5,7 @@ using rp.Accounting.App.Models.InfoModels;
 using rp.Accounting.App.Models.RequestModels;
 using rp.Accounting.App.Services.Communication;
 using rp.Accounting.App.Services.Interfaces;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -80,11 +81,11 @@ namespace rp.Accounting.App.Services
 
             try
             {
+                repo.DetachLocal(existingCustomer);
                 repo.Update(existingCustomer);
-                if (await repo.CompleteAsync())
-                    return new ServiceResponse<object>(true, ServiceCode.Ok);
-            } catch { return new ServiceResponse<object>(false, ServiceCode.InternalServerError); }
-            return new ServiceResponse<object>(false, ServiceCode.InternalServerError);
+                await repo.CompleteAsync();
+                return new ServiceResponse<object>(true, ServiceCode.Ok);
+            } catch {return new ServiceResponse<object>(false, ServiceCode.InternalServerError); }
         }
     }
 }

@@ -28,7 +28,7 @@ namespace rp.Accounting.App.Infrastructure
 
         public IQueryable<Customer> GetCustomerById(int id)
         {
-            return ctx.Customers.Where(c => c.Id == id).AsNoTracking();
+            return ctx.Customers.AsNoTracking().Where(c => c.Id == id);
         }
     }
 }
