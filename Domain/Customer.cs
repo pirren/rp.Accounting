@@ -16,11 +16,28 @@ namespace rp.Accounting.Domain
         public DateTime Registered { get; } = DateTime.Now;
         public ICollection<PrivateBillingBaseItem> Items { get; set; }
 
+        public Customer(string firstName, CustomerType type)
+        {
+            FirstName = firstName;
+            Type = type;
+        }
+
         public Customer(int id, string firstName, CustomerType type)
         {
             Id = id;
             FirstName = firstName;
             Type = type;
+        }
+
+        /// <summary>
+        /// Sets the lastname only for private customers
+        /// </summary>
+        /// <param name="lastName"></param>
+        public void SetLastName(string lastName)
+        {
+            if (this.Type == CustomerType.Company)
+                return;
+            this.LastName = lastName;
         }
 
         /// <summary>

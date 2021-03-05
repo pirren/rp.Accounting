@@ -7,9 +7,10 @@
 }
 else if (Request.Active)
 {
-    <EditForm Model="@Request" OnValidSubmit="(async () => await TryPost())">
-        <DataAnnotationsValidator />
-        <div class="form-group">
+<EditForm Model="@Request" OnValidSubmit="(async () => await TryPost())">
+    <DataAnnotationsValidator />
+    <div class="form-row">
+        <div class="col">
             <label for="FirstName">Förnamn:</label>
             <InputText @bind-Value="@Request.FirstName" class="form-control" id="FirstName" placeholder="Förnamn" />
             <small id="FirstNameHelp" class="form-text text-muted">För företagskunder ange företagsnamnet.</small>
@@ -17,39 +18,48 @@ else if (Request.Active)
         </div>
         @if (Request.TypeIsPrivate)
         {
-            <div class="form-group">
+            <div class="col">
                 <label for="LastName">Efternamn:</label>
                 <InputText @bind-Value="@Request.LastName" class="form-control" id="LastName" placeholder="Efternamn" />
                 <small id="LastNameHelp" class="form-text text-muted">Kundens efternamn.</small>
                 <ValidationMessage For="@(() => Request.LastName)" />
             </div>
         }
-        <div class="form-group">
+        else
+        {
+            <div class="col"></div>
+        }
+    </div>
+    <div class="form-row">
+        <div class="col">
             <label for="Address">Address:</label>
             <InputText @bind-Value="@Request.Address" class="form-control" id="Address" placeholder="Address" />
-            <small id="AddressHelp" class="form-text text-muted">Address kund eller företag.</small>
+            <small id="AddressHelp" class="form-text text-muted">Addressen till kund eller företag.</small>
             <ValidationMessage For="@(() => Request.Address)" />
         </div>
-        <div class="form-group">
+        <div class="col">
             <label for="Email">E-mail:</label>
             <InputText @bind-Value="@Request.Email" class="form-control" id="Email" placeholder="E-mail" />
             <small id="EmailHelp" class="form-text text-muted">E-mail för kund eller företag.</small>
             <ValidationMessage For="@(() => Request.Email)" />
         </div>
-        @if (Request.TypeIsPrivate)
-        {
-            <div class="form-group">
+    </div>
+    @if (Request.TypeIsPrivate)
+    {
+        <div class="form-row">
+            <div class="col">
                 <label for="HourlyFee">Timpris:</label>
                 <InputText @bind-Value="@Request.HourlyFee" class="form-control" id="HourlyFee" placeholder="Timpris" />
                 <small id="HourlyFeeHelp" class="form-text text-muted">Anges inte för företag.</small>
                 <ValidationMessage For="@(() => Request.HourlyFee)" />
             </div>
-        }
-
-        <div class="form-group">
-            <button type="submit" class="btn btn-success btn-block">Spara förändringar <i class="oi oi-check"></i></button>
+            <div class="col"></div>
         </div>
-    </EditForm>
+    }
+    <div class="form-group mt-3">
+        <button type="submit" class="btn btn-success">Spara förändringar <i class="oi oi-check"></i></button>
+    </div>
+</EditForm>
 }
 else
 {
@@ -58,8 +68,8 @@ else
 @code {
     [Parameter] public string CustomerId { get; set; }
     [Inject] ICustomerService CustomerService { get; set; }
-    [Inject] NavigationManager Nav { get; set; }
     [Inject] IToastService ToastService { get; set; }
+    [Inject] NavigationManager Nav { get; set; }
 
     private CustomerRequest Request;
     private int id;

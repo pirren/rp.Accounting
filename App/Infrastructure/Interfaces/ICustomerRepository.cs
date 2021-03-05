@@ -1,6 +1,5 @@
 ﻿using rp.Accounting.Domain;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace rp.Accounting.App.Infrastructure.Interfaces

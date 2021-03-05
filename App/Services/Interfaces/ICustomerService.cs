@@ -12,5 +12,6 @@ namespace rp.Accounting.App.Services.Interfaces
         Task<ServiceResponse<CustomerInfo[]>> GetCompanyCustomersAsync();
         Task<ServiceResponse<CustomerInfo>> GetCustomerByIdAsync(int id);
         Task<ServiceResponse<object>> UpdateCustomerAsync(int id, CustomerRequest request);
+        Task<ServiceResponse<object>> AddCustomerAsync(CustomerRequest request);
     }
 }

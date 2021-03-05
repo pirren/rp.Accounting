@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using rp.Accounting.App.Infrastructure.Interfaces;
+﻿using rp.Accounting.App.Infrastructure.Interfaces;
 using rp.Accounting.App.Models;
 using rp.Accounting.App.Models.InfoModels;
 using rp.Accounting.App.Models.RequestModels;
@@ -17,6 +16,19 @@ namespace rp.Accounting.App.Services
         public CustomerService(ICustomerRepository repo)
         {
             this.repo = repo;
+        }
+
+        public async Task<ServiceResponse<object>> AddCustomerAsync(CustomerRequest request)
+        {
+            try
+            {
+                var newCustomer = request.ToDomain();
+                await repo.AddAsync(newCustomer);
+                await repo.CompleteAsync();
+                return new ServiceResponse<object>(newCustomer);
+            } catch {
+                return new ServiceResponse<object>(ServiceCode.InternalServerError);
+            }
         }
 
         public async Task<ServiceResponse<CustomerInfo[]>> GetAllCustomersAsync()
