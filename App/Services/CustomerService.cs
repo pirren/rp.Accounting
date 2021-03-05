@@ -21,51 +21,47 @@ namespace rp.Accounting.App.Services
 
         public async Task<ServiceResponse<CustomerInfo[]>> GetAllCustomersAsync()
         {
-            var result = await repo.GetAllCustomers()
-                .Select(c => c.ToDto())
-                .ToArrayAsync();
+            var result = await repo.GetAllCustomers();
+            var mapped = result.Select(c => c.ToDto()).ToArray();
 
-            if (result.Length > 0)
-                return new ServiceResponse<CustomerInfo[]>(result);
-            else return new ServiceResponse<CustomerInfo[]>(ServiceCode.NoContent);
+            if (mapped.Length == 0)
+                return new ServiceResponse<CustomerInfo[]>(ServiceCode.NoContent);
+            return new ServiceResponse<CustomerInfo[]>(mapped);
         }
 
         public async Task<ServiceResponse<CustomerInfo[]>> GetCompanyCustomersAsync()
         {
-            var result = await repo.GetCompanyCustomers()
-                .Select(c => c.ToDto())
-                .ToArrayAsync();
+            var result = await repo.GetCompanyCustomers();
+            var mapped = result.Select(c => c.ToDto()).ToArray();
 
-            if (result.Length > 0)
-                return new ServiceResponse<CustomerInfo[]>(result);
-            else return new ServiceResponse<CustomerInfo[]>(ServiceCode.NoContent);
+            if (mapped.Length == 0)
+                return new ServiceResponse<CustomerInfo[]>(ServiceCode.NoContent);
+            return new ServiceResponse<CustomerInfo[]>(mapped);
         }
 
         public async Task<ServiceResponse<CustomerInfo>> GetCustomerByIdAsync(int id)
         {
-            var result = await repo.GetCustomerById(id)
-                .Select(s => s.ToDto())
-                .FirstOrDefaultAsync();
-
+            var result = await repo.GetCustomerById(id);
             if (result == null)
                 return new ServiceResponse<CustomerInfo>(ServiceCode.NotFound);
-            else return new ServiceResponse<CustomerInfo>(result);
+
+            var mapped = result.ToDto();
+            return new ServiceResponse<CustomerInfo>(mapped);
         }
 
         public async Task<ServiceResponse<CustomerInfo[]>> GetPrivateCustomersAsync()
         {
-            var result = await repo.GetPrivateCustomers()
-                .Select(c => c.ToDto())
-                .ToArrayAsync();
+            var result = await repo.GetPrivateCustomers();
+            var mapped = result.Select(c => c.ToDto()).ToArray();
 
-            if (result.Length > 0)
-                return new ServiceResponse<CustomerInfo[]>(result);
-            else return new ServiceResponse<CustomerInfo[]>(ServiceCode.NoContent);
+            if (mapped.Length == 0)
+                return new ServiceResponse<CustomerInfo[]>(ServiceCode.NoContent);
+            return new ServiceResponse<CustomerInfo[]>(mapped);
         }
 
         public async Task<ServiceResponse<object>> UpdateCustomerAsync(int id, CustomerRequest request)
         {
-            var existingCustomer = await repo.GetCustomerById(id).FirstOrDefaultAsync();
+            var existingCustomer = await repo.GetCustomerById(id);
             if (existingCustomer == null)
                 return new ServiceResponse<object>(false, ServiceCode.NotFound);
 

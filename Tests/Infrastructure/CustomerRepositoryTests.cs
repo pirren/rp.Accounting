@@ -6,6 +6,7 @@ using rp.Accounting.DataAccess;
 using rp.Accounting.Domain;
 using rp.Accounting.Tests.TestHelpers;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -28,12 +29,12 @@ namespace rp.Accounting.Tests.Infrastructure
             var repo = new CustomerRepository(ctx.Object);
 
             // act
-            var result = await repo.GetAllCustomers().ToArrayAsync();
+            var result = await repo.GetAllCustomers();
 
             // assert
-            Assert.IsType<Customer[]>(result);
+            Assert.IsType<List<Customer>>(result);
             Assert.All(result, res => Assert.True(res.Active));
-            Assert.True(result.Length == customers.Count);
+            Assert.True(result.Count == customers.Count);
         }
 
         [Fact]
@@ -45,12 +46,12 @@ namespace rp.Accounting.Tests.Infrastructure
             var repo = new CustomerRepository(ctx.Object);
 
             // act
-            var result = await repo.GetAllCustomers().ToArrayAsync();
+            var result = await repo.GetAllCustomers();
 
             // assert
-            Assert.IsType<Customer[]>(result);
+            Assert.IsType<List<Customer>>(result);
             Assert.All(result, res => Assert.True(res.Active));
-            Assert.True(result.Length == 0);
+            Assert.True(result.Count == 0);
         }
 
         [Fact]
@@ -64,12 +65,12 @@ namespace rp.Accounting.Tests.Infrastructure
             var repo = new CustomerRepository(ctx.Object);
 
             // act
-            var result = await repo.GetAllCustomers().ToArrayAsync();
+            var result = await repo.GetAllCustomers();
 
             // assert
-            Assert.IsType<Customer[]>(result);
+            Assert.IsType<List<Customer>>(result);
             Assert.All(result, res => Assert.True(res.Active));
-            Assert.True(result.Length == customers.Count - 1);
+            Assert.True(result.Count == customers.Count - 1);
         }
         #endregion
 
@@ -84,10 +85,10 @@ namespace rp.Accounting.Tests.Infrastructure
             var repo = new CustomerRepository(ctx.Object);
 
             // act
-            var result = await repo.GetPrivateCustomers().ToArrayAsync();
+            var result = await repo.GetPrivateCustomers();
 
             // assert
-            Assert.IsType<Customer[]>(result);
+            Assert.IsType<List<Customer>>(result);
             Assert.All(result, res => Assert.True(res.Active));
             Assert.All(result, res => Assert.True(res.Type == CustomerType.Private));
         }
@@ -101,12 +102,12 @@ namespace rp.Accounting.Tests.Infrastructure
             var repo = new CustomerRepository(ctx.Object);
 
             // act
-            var result = await repo.GetPrivateCustomers().ToArrayAsync();
+            var result = await repo.GetPrivateCustomers();
 
             // assert
-            Assert.IsType<Customer[]>(result);
+            Assert.IsType<List<Customer>>(result);
             Assert.All(result, res => Assert.True(res.Active));
-            Assert.True(result.Length == 0);
+            Assert.True(result.Count == 0);
         }
 
         [Fact]
@@ -120,13 +121,13 @@ namespace rp.Accounting.Tests.Infrastructure
             var repo = new CustomerRepository(ctx.Object);
 
             // act
-            var result = await repo.GetPrivateCustomers().ToArrayAsync();
+            var result = await repo.GetPrivateCustomers();
             var privateCount = customers.Where(e => e.Type == CustomerType.Private).Count();
 
             // assert
-            Assert.IsType<Customer[]>(result);
+            Assert.IsType<List<Customer>>(result);
             Assert.All(result, res => Assert.True(res.Active));
-            Assert.True(result.Length == privateCount - 1);
+            Assert.True(result.Count == privateCount - 1);
         }
         #endregion
 
@@ -141,10 +142,10 @@ namespace rp.Accounting.Tests.Infrastructure
             var repo = new CustomerRepository(ctx.Object);
 
             // act
-            var result = await repo.GetCompanyCustomers().ToArrayAsync();
+            var result = await repo.GetCompanyCustomers();
 
             // assert
-            Assert.IsType<Customer[]>(result);
+            Assert.IsType<List<Customer>>(result);
             Assert.All(result, res => Assert.True(res.Active));
             Assert.All(result, res => Assert.True(res.Type == CustomerType.Company));
         }
@@ -158,12 +159,12 @@ namespace rp.Accounting.Tests.Infrastructure
             var repo = new CustomerRepository(ctx.Object);
 
             // act
-            var result = await repo.GetCompanyCustomers().ToArrayAsync();
+            var result = await repo.GetCompanyCustomers();
 
             // assert
-            Assert.IsType<Customer[]>(result);
+            Assert.IsType<List<Customer>>(result);
             Assert.All(result, res => Assert.True(res.Active));
-            Assert.True(result.Length == 0);
+            Assert.True(result.Count == 0);
         }
 
         [Fact]
@@ -177,13 +178,13 @@ namespace rp.Accounting.Tests.Infrastructure
             var repo = new CustomerRepository(ctx.Object);
 
             // act
-            var result = await repo.GetCompanyCustomers().ToArrayAsync();
+            var result = await repo.GetCompanyCustomers();
             var companyCount = customers.Where(e => e.Type == CustomerType.Company).Count();
 
             // assert
-            Assert.IsType<Customer[]>(result);
+            Assert.IsType<List<Customer>>(result);
             Assert.All(result, res => Assert.True(res.Active));
-            Assert.True(result.Length == companyCount - 1);
+            Assert.True(result.Count == companyCount - 1);
         }
         #endregion
 
@@ -199,7 +200,7 @@ namespace rp.Accounting.Tests.Infrastructure
 
             // act
             var paramId = 1;
-            var result = await repo.GetCustomerById(paramId).FirstOrDefaultAsync();
+            var result = await repo.GetCustomerById(paramId);
 
             // assert
             Assert.IsType<Customer>(result);
@@ -217,7 +218,7 @@ namespace rp.Accounting.Tests.Infrastructure
 
             // act
             var paramId = 99;
-            var result = await repo.GetCustomerById(paramId).FirstOrDefaultAsync();
+            var result = await repo.GetCustomerById(paramId);
 
             // assert
             Assert.Null(result);
