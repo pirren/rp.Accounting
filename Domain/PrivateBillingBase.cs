@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace rp.Accounting.Domain
 {
-    public class PrivateBillingBase
+    public class PrivateBillingBase : IIdentifier
     {
         public int Id { get; private set; }
         public DateTime Date { get; private set; } = DateTime.Now;
@@ -46,7 +46,7 @@ namespace rp.Accounting.Domain
         /// <returns>Housed BillingBase</returns>
         public PrivateBillingBase EnterUnhousedCustomers(List<Customer> customers)
         {
-            if (this.Items == null) throw new InvalidOperationException("This is a non green-field operation. Only populated objects can have additional fields.");
+            if (this.Items is null) throw new InvalidOperationException("This is a non green-field operation. Only populated objects can have additional fields.");
             var unhoused = customers.Where(c => c.Active && !this.Items.Select(p => p.Customer.Id).Contains(c.Id));
             foreach (var customer in unhoused)
                 Items.Add(new PrivateBillingBaseItem(this, customer) { PricePerHour = customer.HourlyFee ?? 0.0 });
@@ -61,7 +61,7 @@ namespace rp.Accounting.Domain
         public PrivateBillingBase PopulateNew(List<Customer> customers)
         {
             if (customers is null) throw new ArgumentNullException(nameof(customers));
-            if (this.Items != null) throw new InvalidOperationException("This is a green-field operation. Only new objects can be populated.");
+            if (this.Items is not null) throw new InvalidOperationException("This is a green-field operation. Only new objects can be populated.");
             this.Items = new List<PrivateBillingBaseItem>();
             foreach(var customer in customers.Where(c => c.Active))
                 Items.Add(new PrivateBillingBaseItem(this, customer) { PricePerHour = customer.HourlyFee ?? 0.0 });
@@ -71,7 +71,7 @@ namespace rp.Accounting.Domain
         public PrivateBillingBase() { }
     }
 
-    public class PrivateBillingBaseItem
+    public class PrivateBillingBaseItem : IIdentifier
     {
         public int Id { get; private set; }
         public PrivateBillingBase PrivateBillingBase { get; private set; }

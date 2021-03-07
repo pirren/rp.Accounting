@@ -1,7 +1,7 @@
 ﻿@page "/customer/edit/{CustomerId}"
 
 <h3>Ändra kunduppgifter</h3>
-@if (Request == null)
+@if (Request is null)
 {
     <text>Inga kunduppgifter har hittats.</text>
 }
