@@ -33,6 +33,8 @@ namespace rp.Accounting.App
             services.AddBlazoredToast();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<IPrivateBillingBaseRepository, PrivateBillingBaseRepository>();
+            services.AddScoped<IPrivateBillingBaseService, PrivateBillingBaseService>();
             services.AddDbContext<RpContext>(opt => opt.UseSqlite("Data Source=rp.Accounting.db"));
         }
 

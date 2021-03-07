@@ -20,17 +20,17 @@ namespace rp.Accounting.App.Infrastructure
 
         public async Task<List<Customer>> GetPrivateCustomers()
         {
-            return await ctx.Customers.Where(c => c.Active && c.Type == CustomerType.Private).AsNoTracking().ToListAsync();
+            return await ctx.Customers.Where(c => c.Active && c.Type == CustomerType.Private).ToListAsync();
         }
 
         public async Task<List<Customer>> GetCompanyCustomers()
         {
-            return await ctx.Customers.Where(c => c.Active && c.Type == CustomerType.Company).AsNoTracking().ToListAsync();
+            return await ctx.Customers.Where(c => c.Active && c.Type == CustomerType.Company).ToListAsync();
         }
 
         public async Task<Customer> GetCustomerById(int id)
         {
-            return await ctx.Customers.AsNoTracking().FirstOrDefaultAsync(f => f.Id == id);
+            return await ctx.Customers.FirstOrDefaultAsync(f => f.Id == id);
         }
     }
 }

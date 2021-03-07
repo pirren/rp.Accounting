@@ -1,4 +1,4 @@
-﻿using rp.Accounting.App.Models.InfoModels;
+﻿using rp.Accounting.Domain;
 using System;
 using System.Threading.Tasks;
 
@@ -6,7 +6,7 @@ namespace rp.Accounting.App.Infrastructure.Interfaces
 {
     public interface IPrivateBillingBaseRepository : ICustomerRepository
     {
-        Task<PrivateBillingBaseInfo> GetCurrent();
-        Task<PrivateBillingBaseInfo> GetEarlier(DateTime date, Type type);
+        Task<PrivateBillingBase> GetCurrentBillingBase();
+        Task<PrivateBillingBase> GetEarlierBillingBase(DateTime date, Type type);
     }
 }

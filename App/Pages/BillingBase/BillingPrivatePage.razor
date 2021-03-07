@@ -1,0 +1,83 @@
+﻿@page "/billing/private"
+
+<h3>Privat fakturaunderlag</h3>
+
+@if (BillingBaseItems == null)
+{
+    <span>Hittade inget underlag.</span>
+}
+else
+{
+    <EditForm Model="@BillingBaseItems">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Namn</th>
+                    <th>Veckor</th>
+                    <th>Antal gånger</th>
+                    <th>Timmar per gång</th>
+                    <th>Totala timmar</th>
+                    <th>Timpris</th>
+                    <th>Ex. moms</th>
+                    <th>Ink. moms</th>
+                    <th>Efter rut</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in BillingBaseItems)
+                {
+                    <tr>
+                        <td>@($"{item.FirstName} {item.LastName}")</td>
+                        <td><InputText @bind-Value="@item.WeeksAttended" class="form-control" id="@($"WeeksAttended-{item.Id}")" placeholder="Veckor" /></td>
+                        <td><InputText @bind-Value="@item.AmountOccassions" class="form-control" id="@($"AmountOccassions-{item.Id}")" placeholder="" /></td>
+                        <td><InputText @bind-Value="@item.HoursPerVisit" class="form-control" id="@($"HoursPerVisit-{item.Id}")" placeholder="Timmar per gång" /></td>
+                        <td><InputText @bind-Value="@item.TotalHours" @onblur="(() => UpdateValues(item))" class="form-control" id="@($"TotalHours-{item.Id}")" placeholder="" /></td>
+                        <td>@item.PricePerHour</td>
+                        <td>@item.ExVAT</td>
+                        <td>@item.IncVAT</td>
+                        <td>@item.AfterRUT</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </EditForm>
+}
+
+@code {
+    [Inject] IPrivateBillingBaseService BillingBaseService { get; set; }
+    [Inject] IToastService ToastService { get; set; }
+
+    private PrivateBillingBaseItemInfo[] BillingBaseItems;
+    private int Id;
+    //private EditContext EditContext;
+
+    protected async override Task OnInitializedAsync()
+    {
+        var result = await BillingBaseService.GetCurrentBillingBaseAsync();
+        Id = result.Entity.Id;
+        BillingBaseItems = result.Entity.Items.ToArray();
+        //EditContext = new EditContext(BillingBaseItems);
+        //EditContext.OnFieldChanged += EditContext_OnFieldChanged;
+    }
+
+    //private void EditContext_OnFieldChanged(object sender, FieldChangedEventArgs e)
+    //{
+    //    var field = e.FieldIdentifier.FieldName;
+    //    if (e.FieldIdentifier.FieldName != "TotalHours") return;
+    //    var model = (PrivateBillingBaseItemInfo)e.FieldIdentifier.Model;
+
+    //    var value = BillingBaseItems.Where(e => e.Id == model.Id).FirstOrDefault().TotalHours;
+    //    if (value == null) return;
+
+    //    ToastService.ShowInfo("Value: " + value + ", For Item ID: " + model.Id);
+    //}
+
+    private void UpdateValues(PrivateBillingBaseItemInfo item)
+    {
+        if (!double.TryParse(item.TotalHours, out double totalHours)) return;
+        item.ExVAT = totalHours * item.PricePerHour;
+        item.IncVAT = item.ExVAT * 1.25;
+        item.AfterRUT = item.IncVAT / 2;
+        StateHasChanged();
+    }
+}

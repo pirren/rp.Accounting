@@ -8,6 +8,21 @@ namespace rp.Accounting.Domain
         public int Id { get; private set; }
         public DateTime Date { get; private set; } = DateTime.Now;
         public ICollection<PrivateBillingBaseItem> Items { get; private set; }
+
+        public PrivateBillingBase PopulateNew(List<Customer> customers)
+        {
+            if (customers is null) throw new ArgumentNullException(nameof(customers));
+            if (this.Items != null) throw new InvalidOperationException("This is not a green-field object, it already holds Items. Only new objects can be populated.");
+            this.Items = new List<PrivateBillingBaseItem>();
+            foreach(var customer in customers)
+                Items.Add(new PrivateBillingBaseItem(this, customer) { PricePerHour = customer.HourlyFee ?? 0.0 });
+            return this;
+        }
+
+        public PrivateBillingBase()
+        {
+
+        }
     }
 
     public class PrivateBillingBaseItem
@@ -37,9 +52,12 @@ namespace rp.Accounting.Domain
             return true;
         }
 
-        public PrivateBillingBaseItem()
-        {
+        public PrivateBillingBaseItem() { }
 
+        public PrivateBillingBaseItem(PrivateBillingBase billingBase, Customer customer)
+        {
+            Customer = customer;
+            PrivateBillingBase = billingBase;
         }
 
         public PrivateBillingBaseItem(int id, PrivateBillingBase privateBillingBase, Customer customer)

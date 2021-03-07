@@ -2,6 +2,7 @@
 using rp.Accounting.App.Models.RequestModels;
 using rp.Accounting.Domain;
 using System;
+using System.Linq;
 
 namespace rp.Accounting.App.Models
 {
@@ -68,6 +69,34 @@ namespace rp.Accounting.App.Models
             if (double.TryParse(c.HourlyFee, out double hourly)) domainEntity.UpdateHourlyPrice(hourly);
             return domainEntity;
         }
+        #endregion
+
+        #region PrivatBillingBase Mapping
+        public static PrivateBillingBaseInfo ToDto(this PrivateBillingBase billingBase)
+            => new PrivateBillingBaseInfo
+            {
+                Id = billingBase.Id,
+                Date = billingBase.Date,
+                Items = billingBase.Items.Select(i => i.ToDto()).ToList()
+            };
+
+        public static PrivateBillingBaseItemInfo ToDto(this PrivateBillingBaseItem bb)
+            => new PrivateBillingBaseItemInfo
+            {
+                Id = bb.Id,
+                PrivateBillingBaseId = bb.Id,
+                CustomerId = bb.Customer.Id,
+                FirstName = bb.Customer.FirstName,
+                LastName = bb.Customer.LastName,
+                WeeksAttended = bb.WeeksAttended,
+                AmountOccassions = bb.AmountOccassions.ToString(),
+                HoursPerVisit = bb.HoursPerVisit,
+                TotalHours = bb.TotalHours.ToString(),
+                PricePerHour = bb.PricePerHour,
+                ExVAT = bb.ExVAT,
+                IncVAT = bb.IncVAT,
+                AfterRUT = bb.AfterRUT
+            };
         #endregion
     }
 }

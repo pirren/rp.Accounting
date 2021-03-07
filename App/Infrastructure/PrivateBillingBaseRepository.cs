@@ -1,7 +1,10 @@
-﻿using rp.Accounting.App.Infrastructure.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using rp.Accounting.App.Infrastructure.Interfaces;
 using rp.Accounting.App.Models.InfoModels;
 using rp.Accounting.DataAccess;
+using rp.Accounting.Domain;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace rp.Accounting.App.Infrastructure
@@ -11,12 +14,17 @@ namespace rp.Accounting.App.Infrastructure
         public PrivateBillingBaseRepository(RpContext ctx) : base(ctx)
         { }
 
-        public Task<PrivateBillingBaseInfo> GetCurrent()
+        public async Task<PrivateBillingBase> GetCurrentBillingBase()
         {
-            throw new NotImplementedException();
+            var dtNow = DateTime.Now;
+            return await ctx.PrivateBillingBases
+                .Where(p => p.Date.Year == dtNow.Year && p.Date.Month == dtNow.Month)
+                .Include(i => i.Items)
+                .ThenInclude(i => i.Customer)
+                .FirstOrDefaultAsync();
         }
 
-        public Task<PrivateBillingBaseInfo> GetEarlier(DateTime date, Type type)
+        public async Task<PrivateBillingBase> GetEarlierBillingBase(DateTime date, Type type)
         {
             throw new NotImplementedException();
         }

@@ -22,7 +22,6 @@ namespace rp.Accounting.DataAccess
 
             var cust = modelBuilder.Entity<Customer>();
             cust.HasKey(p => p.Id);
-            cust.Property(p => p.FirstName).IsRequired();
             cust.Property(p => p.Type).IsRequired();
             cust.Property(p => p.Email).IsRequired();
             cust.Property(p => p.Registered).IsRequired();
