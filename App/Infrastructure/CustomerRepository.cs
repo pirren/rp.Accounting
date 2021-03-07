@@ -14,23 +14,24 @@ namespace rp.Accounting.App.Infrastructure
         { }
 
         public async Task<List<Customer>> GetAllCustomers()
-        {
-            return await ctx.Customers.Where(c => c.Active).AsNoTracking().ToListAsync();
-        }
+            => await ctx.Customers.Where(c => c.Active).AsNoTracking().ToListAsync();
 
         public async Task<List<Customer>> GetPrivateCustomers()
-        {
-            return await ctx.Customers.Where(c => c.Active && c.Type == CustomerType.Private).ToListAsync();
-        }
+            => await ctx.Customers.Where(c => c.Active && c.Type == CustomerType.Private).ToListAsync();
 
         public async Task<List<Customer>> GetCompanyCustomers()
-        {
-            return await ctx.Customers.Where(c => c.Active && c.Type == CustomerType.Company).ToListAsync();
-        }
+            => await ctx.Customers.Where(c => c.Active && c.Type == CustomerType.Company).ToListAsync();
 
         public async Task<Customer> GetCustomerById(int id)
-        {
-            return await ctx.Customers.FirstOrDefaultAsync(f => f.Id == id);
-        }
+            => await ctx.Customers.FirstOrDefaultAsync(f => f.Id == id);
+
+        public async Task<List<Customer>> GetPrivateInactiveCustomers()
+            => await ctx.Customers.Where(c => !c.Active && c.Type == CustomerType.Private).ToListAsync();
+
+        public async Task<List<Customer>> GetCompanyInactiveCustomers()
+            => await ctx.Customers.Where(c => !c.Active && c.Type == CustomerType.Company).ToListAsync();
+
+        public async Task<List<Customer>> GetInactiveCustomers()
+            => await ctx.Customers.Where(c => !c.Active).ToListAsync();
     }
 }

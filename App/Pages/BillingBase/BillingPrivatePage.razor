@@ -2,13 +2,14 @@
 
 <h3>Privat fakturaunderlag</h3>
 
-@if (BillingBaseItems == null)
+<PageInfo Content="Fakturaunderlag för privata kunder, ifall du har ändrat på kunduppgifter, eller tagit bort kunder, kan du uppdatera hela underlaget med knappen 'Läs om innehåll' längst ner. Sparat innehåll kommer inte skadas av detta." />
+@if (BillingBase == null)
 {
     <span>Hittade inget underlag.</span>
 }
 else
 {
-    <EditForm Model="@BillingBaseItems">
+    <EditForm Model="@BillingBase.Items" OnValidSubmit="@TrySend">
         <table class="table">
             <thead>
                 <tr>
@@ -24,7 +25,7 @@ else
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in BillingBaseItems)
+                @foreach (var item in BillingBase.Items)
                 {
                     <tr>
                         <td>@($"{item.FirstName} {item.LastName}")</td>
@@ -40,6 +41,11 @@ else
                 }
             </tbody>
         </table>
+        <div class="form-group mt-3">
+            <button type="submit" class="btn btn-primary">Spara förändringar <i class="oi oi-check"></i></button>
+            <button class="btn btn-primary" @onclick="(() => SyncBillingBaseAsync())">Läs om innehåll <i class="oi oi-action-redo"></i></button>
+            <button class="btn btn-success">Ladda ner Excel <i class="oi oi-data-transfer-download"></i></button>
+        </div>
     </EditForm>
 }
 
@@ -47,30 +53,15 @@ else
     [Inject] IPrivateBillingBaseService BillingBaseService { get; set; }
     [Inject] IToastService ToastService { get; set; }
 
-    private PrivateBillingBaseItemInfo[] BillingBaseItems;
+    private PrivateBillingBaseInfo BillingBase;
     private int Id;
-    //private EditContext EditContext;
 
     protected async override Task OnInitializedAsync()
     {
         var result = await BillingBaseService.GetCurrentBillingBaseAsync();
         Id = result.Entity.Id;
-        BillingBaseItems = result.Entity.Items.ToArray();
-        //EditContext = new EditContext(BillingBaseItems);
-        //EditContext.OnFieldChanged += EditContext_OnFieldChanged;
+        BillingBase = result.Entity;
     }
-
-    //private void EditContext_OnFieldChanged(object sender, FieldChangedEventArgs e)
-    //{
-    //    var field = e.FieldIdentifier.FieldName;
-    //    if (e.FieldIdentifier.FieldName != "TotalHours") return;
-    //    var model = (PrivateBillingBaseItemInfo)e.FieldIdentifier.Model;
-
-    //    var value = BillingBaseItems.Where(e => e.Id == model.Id).FirstOrDefault().TotalHours;
-    //    if (value == null) return;
-
-    //    ToastService.ShowInfo("Value: " + value + ", For Item ID: " + model.Id);
-    //}
 
     private void UpdateValues(PrivateBillingBaseItemInfo item)
     {
@@ -78,6 +69,45 @@ else
         item.ExVAT = totalHours * item.PricePerHour;
         item.IncVAT = item.ExVAT * 1.25;
         item.AfterRUT = item.IncVAT / 2;
+        StateHasChanged();
+    }
+
+    private async void TrySend()
+    {
+        foreach (var item in BillingBase.Items)
+        {
+            if (!double.TryParse(item.TotalHours, out double _) && !string.IsNullOrWhiteSpace(item.TotalHours))
+            {
+                ToastService.ShowWarning("\"Totala timmar\" på ett eller flera fält är fel format, måste anges numeriskt", "Oj");
+                return;
+            }
+            if (!double.TryParse(item.AmountOccassions, out double _) && !string.IsNullOrWhiteSpace(item.AmountOccassions))
+            {
+                ToastService.ShowWarning("\"Antal gånger\" på ett eller flera fält är fel format, måste anges numeriskt", "Oj");
+                return;
+            }
+        }
+        var result = await BillingBaseService.UpdateBillingBaseAsync(BillingBase);
+        if (!result.Success)
+        {
+            ToastService.ShowWarning("Lyckades inte spara", "Ajdå");
+            return;
+        }
+        ToastService.ShowSuccess("Fakturaunderlaget sparades", "Perfekt");
+        BillingBase = result.Entity;
+        StateHasChanged();
+    }
+
+    private async void SyncBillingBaseAsync()
+    {
+        var result = await BillingBaseService.SyncBillingBaseItemsAsync(Id);
+        if (result.Success)
+        {
+            ToastService.ShowInfo("Fakturaunderlaget uppdaterades", "Info");
+            BillingBase = result.Entity;
+        }
+        else
+            ToastService.ShowWarning("Lyckades inte uppdatera", "Ajdå");
         StateHasChanged();
     }
 }

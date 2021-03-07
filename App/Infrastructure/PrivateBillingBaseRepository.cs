@@ -14,7 +14,15 @@ namespace rp.Accounting.App.Infrastructure
         public PrivateBillingBaseRepository(RpContext ctx) : base(ctx)
         { }
 
-        public async Task<PrivateBillingBase> GetCurrentBillingBase()
+        public async Task<PrivateBillingBase> GetByIdAsync(int id)
+        {
+            return await ctx.PrivateBillingBases.Where(s => s.Id == id)
+                .Include(i => i.Items)
+                .ThenInclude(c => c.Customer)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<PrivateBillingBase> GetCurrentBillingBaseAsync()
         {
             var dtNow = DateTime.Now;
             return await ctx.PrivateBillingBases
@@ -24,7 +32,7 @@ namespace rp.Accounting.App.Infrastructure
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<PrivateBillingBase> GetEarlierBillingBase(DateTime date, Type type)
+        public async Task<PrivateBillingBase> GetEarlierBillingBaseAsync(DateTime date, Type type)
         {
             throw new NotImplementedException();
         }

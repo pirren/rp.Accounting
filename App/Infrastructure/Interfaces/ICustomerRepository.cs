@@ -10,5 +10,8 @@ namespace rp.Accounting.App.Infrastructure.Interfaces
         Task<List<Customer>> GetPrivateCustomers();
         Task<List<Customer>> GetCompanyCustomers();
         Task<Customer> GetCustomerById(int id);
+        Task<List<Customer>> GetPrivateInactiveCustomers();
+        Task<List<Customer>> GetCompanyInactiveCustomers();
+        Task<List<Customer>> GetInactiveCustomers();
     }
 }

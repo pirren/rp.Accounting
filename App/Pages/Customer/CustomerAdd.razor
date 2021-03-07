@@ -69,15 +69,15 @@
     {
         if (!Request.TypeIsValid)
         {
-            ToastService.ShowWarning("Ange vilken slags kund");
+            ToastService.ShowWarning("Du måste ange vilken typ av kund det rör sig om.", "Vänta lite!");
             return;
         }
 
         var result = await CustomerService.AddCustomerAsync(Request);
         if (result.Success)
-            ToastService.ShowSuccess("Ny kund sparad!");
+            ToastService.ShowSuccess("Ny kund sparad!", "Sparad!");
         else
-            ToastService.ShowError("Något verkar ha gått snett.");
+            ToastService.ShowError("Något verkar ha gått snett.", "Hoppsan!");
         Nav.NavigateTo("customer/all");
     }
 }
