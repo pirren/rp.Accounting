@@ -18,10 +18,10 @@ namespace rp.Accounting.App.Services
             this.repo = repo;
         }
 
-        public async Task<ServiceResponse<PrivateBillingBaseInfo>> SyncBillingBaseItemsAsync(int billingBaseId)
+        public async Task<TResponse<PrivateBillingBaseInfo>> SyncBillingBaseItemsAsync(int billingBaseId)
         {
             var billingBase = await repo.GetByIdAsync(billingBaseId);
-            if (billingBase == null) return new ServiceResponse<PrivateBillingBaseInfo>(ServiceCode.NotFound);
+            if (billingBase == null) return new TResponse<PrivateBillingBaseInfo>(ServiceCode.NotFound);
 
             var customers = await repo.GetPrivateCustomers();
             var inactiveCustomers = await repo.GetInactiveCustomers();
@@ -31,14 +31,15 @@ namespace rp.Accounting.App.Services
                 billingBase.EnterUnhousedCustomers(customers);
                 billingBase.UpdateHourlyPrices();
                 await repo.CompleteAsync();
-                return new ServiceResponse<PrivateBillingBaseInfo>(billingBase.ToDto());
-            } catch { return new ServiceResponse<PrivateBillingBaseInfo>(ServiceCode.InternalServerError); }
+                return new TResponse<PrivateBillingBaseInfo>(billingBase.ToDto());
+            }
+            catch { return new TResponse<PrivateBillingBaseInfo>(ServiceCode.InternalServerError); }
         }
 
-        public async Task<ServiceResponse<PrivateBillingBaseInfo>> GetCurrentBillingBaseAsync()
+        public async Task<TResponse<PrivateBillingBaseInfo>> GetCurrentBillingBaseAsync()
         {
             var billingBase = await repo.GetCurrentBillingBaseAsync();
-            if (billingBase != null) return new ServiceResponse<PrivateBillingBaseInfo>(billingBase.ToDto());
+            if (billingBase != null) return new TResponse<PrivateBillingBaseInfo>(billingBase.ToDto());
 
             var privateCustomers = await repo.GetPrivateCustomers();
             var newBillingBase = new PrivateBillingBase()
@@ -48,19 +49,20 @@ namespace rp.Accounting.App.Services
             {
                 await repo.AddAsync(newBillingBase);
                 await repo.CompleteAsync();
-                return new ServiceResponse<PrivateBillingBaseInfo>(newBillingBase.ToDto());
-            } catch { return new ServiceResponse<PrivateBillingBaseInfo>(ServiceCode.InternalServerError); }
+                return new TResponse<PrivateBillingBaseInfo>(newBillingBase.ToDto());
+            }
+            catch { return new TResponse<PrivateBillingBaseInfo>(ServiceCode.InternalServerError); }
         }
 
-        public Task<ServiceResponse<PrivateBillingBaseInfo>> GetEarlierBillingBaseAsync(int year, int month)
+        public Task<TResponse<PrivateBillingBaseInfo>> GetEarlierBillingBaseAsync(int year, int month)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<ServiceResponse<PrivateBillingBaseInfo>> UpdateBillingBaseAsync(PrivateBillingBaseInfo dto)
+        public async Task<TResponse<PrivateBillingBaseInfo>> UpdateBillingBaseAsync(PrivateBillingBaseInfo dto)
         {
             var billingBase = await repo.GetByIdAsync(dto.Id);
-            foreach(var item in billingBase.Items)
+            foreach (var item in billingBase.Items)
             {
                 var dtoItem = dto.Items.Where(s => s.Id == item.Id).FirstOrDefault();
                 if (dtoItem is null) continue;
@@ -70,13 +72,14 @@ namespace rp.Accounting.App.Services
                 item.WeeksAttended = dtoItem.WeeksAttended;
                 item.CalculatePrice();
             }
-            
+
             try
             {
                 repo.Update(billingBase);
                 await repo.CompleteAsync();
-                return new ServiceResponse<PrivateBillingBaseInfo>(billingBase.ToDto());
-            } catch { return new ServiceResponse<PrivateBillingBaseInfo>(ServiceCode.InternalServerError); }
+                return new TResponse<PrivateBillingBaseInfo>(billingBase.ToDto());
+            }
+            catch { return new TResponse<PrivateBillingBaseInfo>(ServiceCode.InternalServerError); }
         }
     }
 }

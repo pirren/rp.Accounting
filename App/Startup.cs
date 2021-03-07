@@ -1,3 +1,4 @@
+using Blazored.Toast;
 using ElectronNET.API;
 using ElectronNET.API.Entities;
 using Microsoft.AspNetCore.Builder;
@@ -11,7 +12,6 @@ using rp.Accounting.App.Infrastructure.Interfaces;
 using rp.Accounting.App.Services;
 using rp.Accounting.App.Services.Interfaces;
 using rp.Accounting.DataAccess;
-using Blazored.Toast;
 
 namespace rp.Accounting.App
 {

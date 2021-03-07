@@ -9,7 +9,7 @@ namespace rp.Accounting.Domain
         public int Id { get; private set; }
         public DateTime Date { get; private set; } = DateTime.Now;
         public ICollection<PrivateBillingBaseItem> Items { get; private set; }
-        
+
         /// <summary>
         /// Updates the HourlyPrices of all customers
         /// </summary>
@@ -18,7 +18,7 @@ namespace rp.Accounting.Domain
         {
             if (Items is null) return this;
             foreach (var item in this.Items)
-                if(item.Customer.HourlyFee.HasValue)
+                if (item.Customer.HourlyFee.HasValue)
                     item.PricePerHour = (double)item.Customer.HourlyFee;
             return this;
         }
@@ -63,7 +63,7 @@ namespace rp.Accounting.Domain
             if (customers is null) throw new ArgumentNullException(nameof(customers));
             if (this.Items is not null) throw new InvalidOperationException("This is a green-field operation. Only new objects can be populated.");
             this.Items = new List<PrivateBillingBaseItem>();
-            foreach(var customer in customers.Where(c => c.Active))
+            foreach (var customer in customers.Where(c => c.Active))
                 Items.Add(new PrivateBillingBaseItem(this, customer) { PricePerHour = customer.HourlyFee ?? 0.0 });
             return this;
         }

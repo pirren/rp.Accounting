@@ -4,7 +4,6 @@ using rp.Accounting.App.Models.InfoModels;
 using rp.Accounting.App.Models.RequestModels;
 using rp.Accounting.App.Services.Communication;
 using rp.Accounting.App.Services.Interfaces;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -18,69 +17,71 @@ namespace rp.Accounting.App.Services
             this.repo = repo;
         }
 
-        public async Task<ServiceResponse<object>> AddCustomerAsync(CustomerRequest request)
+        public async Task<TResponse<object>> AddCustomerAsync(CustomerRequest request)
         {
             try
             {
                 var newCustomer = request.ToDomain();
                 await repo.AddAsync(newCustomer);
                 await repo.CompleteAsync();
-                return new ServiceResponse<object>(newCustomer);
-            } catch {
-                return new ServiceResponse<object>(ServiceCode.InternalServerError);
+                return new TResponse<object>(newCustomer);
+            }
+            catch
+            {
+                return new TResponse<object>(ServiceCode.InternalServerError);
             }
         }
 
-        public async Task<ServiceResponse<CustomerInfo[]>> GetAllCustomersAsync()
+        public async Task<TResponse<CustomerInfo[]>> GetAllCustomersAsync()
         {
             var result = await repo.GetAllCustomers();
             var mapped = result.Select(c => c.ToDto()).ToArray();
 
             if (mapped.Length == 0)
-                return new ServiceResponse<CustomerInfo[]>(ServiceCode.NoContent);
-            return new ServiceResponse<CustomerInfo[]>(mapped);
+                return new TResponse<CustomerInfo[]>(ServiceCode.NoContent);
+            return new TResponse<CustomerInfo[]>(mapped);
         }
 
-        public async Task<ServiceResponse<CustomerInfo[]>> GetCompanyCustomersAsync()
+        public async Task<TResponse<CustomerInfo[]>> GetCompanyCustomersAsync()
         {
             var result = await repo.GetCompanyCustomers();
             var mapped = result.Select(c => c.ToDto()).ToArray();
 
             if (mapped.Length == 0)
-                return new ServiceResponse<CustomerInfo[]>(ServiceCode.NoContent);
-            return new ServiceResponse<CustomerInfo[]>(mapped);
+                return new TResponse<CustomerInfo[]>(ServiceCode.NoContent);
+            return new TResponse<CustomerInfo[]>(mapped);
         }
 
-        public async Task<ServiceResponse<CustomerInfo>> GetCustomerByIdAsync(int id)
+        public async Task<TResponse<CustomerInfo>> GetCustomerByIdAsync(int id)
         {
             var result = await repo.GetCustomerById(id);
             if (result == null)
-                return new ServiceResponse<CustomerInfo>(ServiceCode.NotFound);
+                return new TResponse<CustomerInfo>(ServiceCode.NotFound);
 
             var mapped = result.ToDto();
-            return new ServiceResponse<CustomerInfo>(mapped);
+            return new TResponse<CustomerInfo>(mapped);
         }
 
-        public async Task<ServiceResponse<CustomerInfo[]>> GetPrivateCustomersAsync()
+        public async Task<TResponse<CustomerInfo[]>> GetPrivateCustomersAsync()
         {
             var result = await repo.GetPrivateCustomers();
             var mapped = result.Select(c => c.ToDto()).ToArray();
 
             if (mapped.Length == 0)
-                return new ServiceResponse<CustomerInfo[]>(ServiceCode.NoContent);
-            return new ServiceResponse<CustomerInfo[]>(mapped);
+                return new TResponse<CustomerInfo[]>(ServiceCode.NoContent);
+            return new TResponse<CustomerInfo[]>(mapped);
         }
 
-        public async Task<ServiceResponse<object>> UpdateCustomerAsync(int id, CustomerRequest request)
+        public async Task<TResponse<object>> UpdateCustomerAsync(int id, CustomerRequest request)
         {
             var existingCustomer = await repo.GetCustomerById(id);
             if (existingCustomer == null)
-                return new ServiceResponse<object>(false, ServiceCode.NotFound);
+                return new TResponse<object>(false, ServiceCode.NotFound);
 
             existingCustomer.FirstName = request.FirstName;
             existingCustomer.Address = request.Address;
             existingCustomer.Email = request.Email;
-            if(request.TypeIsPrivate)
+            if (request.TypeIsPrivate)
             {
                 if (double.TryParse(request.HourlyFee, out double hourly))
                     existingCustomer.UpdateHourlyPrice(hourly);
@@ -92,8 +93,9 @@ namespace rp.Accounting.App.Services
                 repo.DetachLocal(existingCustomer);
                 repo.Update(existingCustomer);
                 await repo.CompleteAsync();
-                return new ServiceResponse<object>(true, ServiceCode.Ok);
-            } catch {return new ServiceResponse<object>(false, ServiceCode.InternalServerError); }
+                return new TResponse<object>(true, ServiceCode.Ok);
+            }
+            catch { return new TResponse<object>(false, ServiceCode.InternalServerError); }
         }
     }
 }

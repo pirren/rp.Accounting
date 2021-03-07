@@ -1,18 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
-using Moq;
+﻿using Moq;
 using rp.Accounting.App.Infrastructure.Interfaces;
 using rp.Accounting.App.Models.InfoModels;
 using rp.Accounting.App.Services;
 using rp.Accounting.App.Services.Communication;
-using rp.Accounting.DataAccess;
 using rp.Accounting.Domain;
 using rp.Accounting.Tests.TestHelpers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -36,7 +30,7 @@ namespace rp.Accounting.Tests.Services
             var result = await service.GetAllCustomersAsync();
 
             // assert
-            Assert.IsType<ServiceResponse<CustomerInfo[]>>(result);
+            Assert.IsType<TResponse<CustomerInfo[]>>(result);
             Assert.Null(result.Entity);
             Assert.False(result.Success);
             Assert.True(result.Code == ServiceCode.NoContent);
@@ -56,7 +50,7 @@ namespace rp.Accounting.Tests.Services
             var result = await service.GetAllCustomersAsync();
 
             // assert
-            Assert.IsType<ServiceResponse<CustomerInfo[]>>(result);
+            Assert.IsType<TResponse<CustomerInfo[]>>(result);
             Assert.All(result.Entity, res => Assert.True(res.Active == true));
             Assert.True(result.Entity.Length == customers.Count - 1);
             Assert.True(result.Success);
@@ -77,7 +71,7 @@ namespace rp.Accounting.Tests.Services
             var result = await service.GetPrivateCustomersAsync();
 
             // assert
-            Assert.IsType<ServiceResponse<CustomerInfo[]>>(result);
+            Assert.IsType<TResponse<CustomerInfo[]>>(result);
             Assert.Null(result.Entity);
             Assert.False(result.Success);
             Assert.True(result.Code == ServiceCode.NoContent);
@@ -98,7 +92,7 @@ namespace rp.Accounting.Tests.Services
             var result = await service.GetPrivateCustomersAsync();
 
             // assert
-            Assert.IsType<ServiceResponse<CustomerInfo[]>>(result);
+            Assert.IsType<TResponse<CustomerInfo[]>>(result);
             Assert.All(result.Entity, res => Assert.True(res.Active == true));
             Assert.True(result.Entity.Length == customers.Where(c => c.Type == CustomerType.Private).Count() - 1);
             Assert.True(result.Success);
@@ -119,7 +113,7 @@ namespace rp.Accounting.Tests.Services
             var result = await service.GetCompanyCustomersAsync();
 
             // assert
-            Assert.IsType<ServiceResponse<CustomerInfo[]>>(result);
+            Assert.IsType<TResponse<CustomerInfo[]>>(result);
             Assert.Null(result.Entity);
             Assert.False(result.Success);
             Assert.True(result.Code == ServiceCode.NoContent);
@@ -140,7 +134,7 @@ namespace rp.Accounting.Tests.Services
             var result = await service.GetCompanyCustomersAsync();
 
             // assert
-            Assert.IsType<ServiceResponse<CustomerInfo[]>>(result);
+            Assert.IsType<TResponse<CustomerInfo[]>>(result);
             Assert.All(result.Entity, res => Assert.True(res.Active == true));
             Assert.True(result.Entity.Length == customers.Where(c => c.Type == CustomerType.Company).Count() - 1);
             Assert.True(result.Success);
@@ -164,7 +158,7 @@ namespace rp.Accounting.Tests.Services
             var result = await service.GetCustomerByIdAsync(id);
 
             // assert
-            Assert.IsType<ServiceResponse<CustomerInfo>>(result);
+            Assert.IsType<TResponse<CustomerInfo>>(result);
             Assert.True(result.Success);
             Assert.True(result.Code == ServiceCode.Ok);
             Assert.True(result.Entity.Id == id.ToString());
@@ -185,7 +179,7 @@ namespace rp.Accounting.Tests.Services
             var result = await service.GetCustomerByIdAsync(id);
 
             // assert
-            Assert.IsType<ServiceResponse<CustomerInfo>>(result);
+            Assert.IsType<TResponse<CustomerInfo>>(result);
             Assert.Null(result.Entity);
             Assert.False(result.Success);
             Assert.True(result.Code == ServiceCode.NotFound);

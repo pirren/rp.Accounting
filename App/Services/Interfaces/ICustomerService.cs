@@ -7,11 +7,11 @@ namespace rp.Accounting.App.Services.Interfaces
 {
     public interface ICustomerService
     {
-        Task<ServiceResponse<CustomerInfo[]>> GetAllCustomersAsync();
-        Task<ServiceResponse<CustomerInfo[]>> GetPrivateCustomersAsync();
-        Task<ServiceResponse<CustomerInfo[]>> GetCompanyCustomersAsync();
-        Task<ServiceResponse<CustomerInfo>> GetCustomerByIdAsync(int id);
-        Task<ServiceResponse<object>> UpdateCustomerAsync(int id, CustomerRequest request);
-        Task<ServiceResponse<object>> AddCustomerAsync(CustomerRequest request);
+        Task<TResponse<CustomerInfo[]>> GetAllCustomersAsync();
+        Task<TResponse<CustomerInfo[]>> GetPrivateCustomersAsync();
+        Task<TResponse<CustomerInfo[]>> GetCompanyCustomersAsync();
+        Task<TResponse<CustomerInfo>> GetCustomerByIdAsync(int id);
+        Task<TResponse<object>> UpdateCustomerAsync(int id, CustomerRequest request);
+        Task<TResponse<object>> AddCustomerAsync(CustomerRequest request);
     }
 }

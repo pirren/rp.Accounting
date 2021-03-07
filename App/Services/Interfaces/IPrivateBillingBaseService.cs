@@ -6,9 +6,9 @@ namespace rp.Accounting.App.Services.Interfaces
 {
     public interface IPrivateBillingBaseService
     {
-        Task<ServiceResponse<PrivateBillingBaseInfo>> GetCurrentBillingBaseAsync();
-        Task<ServiceResponse<PrivateBillingBaseInfo>> GetEarlierBillingBaseAsync(int year, int month);
-        Task<ServiceResponse<PrivateBillingBaseInfo>> SyncBillingBaseItemsAsync(int billingBaseId);
-        Task<ServiceResponse<PrivateBillingBaseInfo>> UpdateBillingBaseAsync(PrivateBillingBaseInfo dto);
+        Task<TResponse<PrivateBillingBaseInfo>> GetCurrentBillingBaseAsync();
+        Task<TResponse<PrivateBillingBaseInfo>> GetEarlierBillingBaseAsync(int year, int month);
+        Task<TResponse<PrivateBillingBaseInfo>> SyncBillingBaseItemsAsync(int billingBaseId);
+        Task<TResponse<PrivateBillingBaseInfo>> UpdateBillingBaseAsync(PrivateBillingBaseInfo dto);
     }
 }

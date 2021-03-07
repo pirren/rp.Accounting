@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using rp.Accounting.App.Infrastructure.Interfaces;
-using rp.Accounting.App.Models.InfoModels;
 using rp.Accounting.DataAccess;
 using rp.Accounting.Domain;
 using System;

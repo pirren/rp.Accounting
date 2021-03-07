@@ -2,8 +2,6 @@
 using rp.Accounting.App.Infrastructure.Interfaces;
 using rp.Accounting.DataAccess;
 using rp.Accounting.Domain;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,35 +11,21 @@ namespace rp.Accounting.App.Infrastructure
     {
         protected readonly RpContext ctx;
 
-        public BaseRepository(RpContext ctx)
-        {
-            this.ctx = ctx;
-        }
+        public BaseRepository(RpContext ctx) => this.ctx = ctx;
 
-        public async Task AddAsync<T>(T entity) where T : class
-        {
-            await ctx.AddAsync(entity);
-        }
+        public async Task AddAsync<T>(T entity) where T : class => await ctx.AddAsync(entity);
 
-        public async Task<bool> CompleteAsync()
-        {
-            return await ctx.SaveChangesAsync() > 0;
-        }
+        public async Task<bool> CompleteAsync() => await ctx.SaveChangesAsync() > 0;
 
         public void DetachLocal<T>(T entity) where T : class, IIdentifier
         {
             var local = ctx.Set<T>().Local.FirstOrDefault(entry => entry.Id.Equals(entity.Id));
-            if (local != null) ctx.Entry(local).State = EntityState.Detached;
+            if (local is null)
+                ctx.Entry(local).State = EntityState.Detached;
         }
 
-        public void Remove<T>(T entity) where T : class
-        {
-            ctx.Remove(entity);
-        }
+        public void Remove<T>(T entity) where T : class => ctx.Remove(entity);
 
-        public void Update<T>(T entity) where T : class
-        {
-            ctx.Entry(entity).State = EntityState.Modified;
-        }
+        public void Update<T>(T entity) where T : class => ctx.Entry(entity).State = EntityState.Modified;
     }
 }

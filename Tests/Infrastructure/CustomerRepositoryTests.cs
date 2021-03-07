@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Moq;
+﻿using Moq;
 using Moq.EntityFrameworkCore;
 using rp.Accounting.App.Infrastructure;
 using rp.Accounting.DataAccess;
