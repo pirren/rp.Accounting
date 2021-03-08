@@ -12,6 +12,8 @@ using rp.Accounting.App.Infrastructure.Interfaces;
 using rp.Accounting.App.Services;
 using rp.Accounting.App.Services.Interfaces;
 using rp.Accounting.DataAccess;
+using rp.Accounting.XMLParsing;
+using rp.Accounting.XMLParsing.Interfaces;
 
 namespace rp.Accounting.App
 {
@@ -35,6 +37,7 @@ namespace rp.Accounting.App
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IPrivateBillingBaseRepository, PrivateBillingBaseRepository>();
             services.AddScoped<IPrivateBillingBaseService, PrivateBillingBaseService>();
+            //services.AddScoped<IXMLParser, XMLParser>();
             services.AddDbContext<RpContext>(opt => opt.UseSqlite("Data Source=rp.Accounting.db"));
         }
 

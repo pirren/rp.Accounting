@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "rp.Accounting.Domain", "Dom
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "rp.Accounting.Tests", "Tests\rp.Accounting.Tests.csproj", "{5E35C559-0977-4847-AF03-490291234A22}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rp.Accounting.XMLParsing", "rp.Accounting.XMLParsing\rp.Accounting.XMLParsing.csproj", "{DEA181C2-C2AF-46A5-8C38-6A9827840660}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{5E35C559-0977-4847-AF03-490291234A22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E35C559-0977-4847-AF03-490291234A22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E35C559-0977-4847-AF03-490291234A22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEA181C2-C2AF-46A5-8C38-6A9827840660}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEA181C2-C2AF-46A5-8C38-6A9827840660}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEA181C2-C2AF-46A5-8C38-6A9827840660}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEA181C2-C2AF-46A5-8C38-6A9827840660}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

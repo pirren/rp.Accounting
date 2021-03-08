@@ -9,7 +9,7 @@
 }
 else
 {
-    <EditForm Model="@BillingBase.Items" OnValidSubmit="@TrySend">
+    <EditForm Model="@BillingBase.Items" OnValidSubmit="@(() => TrySaveAsync())">
         <table class="table">
             <thead>
                 <tr>
@@ -43,8 +43,8 @@ else
         </table>
         <div class="form-group mt-3">
             <button type="submit" class="btn btn-primary">Spara förändringar <i class="oi oi-check"></i></button>
-            <button class="btn btn-primary" @onclick="(() => SyncBillingBaseAsync())">Läs om innehåll <i class="oi oi-action-redo"></i></button>
-            <button class="btn btn-success">Ladda ner Excel <i class="oi oi-data-transfer-download"></i></button>
+            <a role="button" href="" @onclick:preventDefault class="btn btn-primary" @onclick="(() => SyncBillingBaseAsync())">Läs om innehåll <i class="oi oi-action-redo"></i></a>
+            <a role="button" href="" @onclick:preventDefault class="btn btn-success" @onclick="(() => TryDownloadExcelAsync())">Ladda ner Excel <i class="oi oi-data-transfer-download"></i></a>
         </div>
     </EditForm>
 }
@@ -52,9 +52,12 @@ else
 @code {
     [Inject] IPrivateBillingBaseService BillingBaseService { get; set; }
     [Inject] IToastService ToastService { get; set; }
+    [Inject] NavigationManager Nav { get; set; }
+    [Inject] IJSRuntime Js { get; set; }
 
     private PrivateBillingBaseInfo BillingBase;
     private int Id;
+    private readonly IWebHostEnvironment _env;
 
     protected async override Task OnInitializedAsync()
     {
@@ -72,30 +75,37 @@ else
         StateHasChanged();
     }
 
-    private async void TrySend()
+    private bool ParseSendData()
     {
         foreach (var item in BillingBase.Items)
         {
             if (!double.TryParse(item.TotalHours, out double _) && !string.IsNullOrWhiteSpace(item.TotalHours))
             {
                 ToastService.ShowWarning("\"Totala timmar\" på ett eller flera fält är fel format, måste anges numeriskt", "Oj");
-                return;
+                return false;
             }
             if (!double.TryParse(item.AmountOccassions, out double _) && !string.IsNullOrWhiteSpace(item.AmountOccassions))
             {
                 ToastService.ShowWarning("\"Antal gånger\" på ett eller flera fält är fel format, måste anges numeriskt", "Oj");
-                return;
+                return false;
             }
         }
+        return true;
+    }
+
+    private async Task<bool> TrySaveAsync(bool showToast = true)
+    {
+        if (!ParseSendData()) return false;
         var result = await BillingBaseService.UpdateBillingBaseAsync(BillingBase);
         if (!result.Success)
         {
-            ToastService.ShowWarning("Lyckades inte spara", "Ajdå");
-            return;
+            if (showToast) ToastService.ShowWarning("Lyckades inte spara", "Ajdå");
+            return false;
         }
-        ToastService.ShowSuccess("Fakturaunderlaget sparades", "Perfekt");
+        if (showToast) ToastService.ShowSuccess("Fakturaunderlaget sparades", "Perfekt");
         BillingBase = result.Entity;
         StateHasChanged();
+        return true;
     }
 
     private async void SyncBillingBaseAsync()
@@ -109,5 +119,18 @@ else
         else
             ToastService.ShowWarning("Lyckades inte uppdatera", "Ajdå");
         StateHasChanged();
+    }
+
+    private async void TryDownloadExcelAsync()
+    {
+        if (!await TrySaveAsync(false))
+        {
+            ToastService.ShowWarning("Kunde inte spara dokumentet innan nedladdning", "Ajdå");
+            return;
+        }
+        var result = await BillingBaseService.GetExcelSheetAsync(Id);
+        if (result.Success)
+            ToastService.ShowInfo(result.Entity, "Underlag redo");
+        await Js.InvokeAsync<string>("downloadFile", result.Entity);
     }
 }
