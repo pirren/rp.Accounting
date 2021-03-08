@@ -1,12 +1,10 @@
-﻿using ClosedXML.Excel;
-using rp.Accounting.App.Infrastructure.Interfaces;
+﻿using rp.Accounting.App.Infrastructure.Interfaces;
 using rp.Accounting.App.Models;
 using rp.Accounting.App.Models.InfoModels;
 using rp.Accounting.App.Services.Communication;
 using rp.Accounting.App.Services.Interfaces;
 using rp.Accounting.Domain;
 using rp.Accounting.XMLParsing;
-using rp.Accounting.XMLParsing.Interfaces;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,11 +14,9 @@ namespace rp.Accounting.App.Services
     public class PrivateBillingBaseService : IPrivateBillingBaseService
     {
         private readonly IPrivateBillingBaseRepository repo;
-        //private readonly IXMLParser xmlParser;
         public PrivateBillingBaseService(IPrivateBillingBaseRepository repo)
         {
             this.repo = repo;
-            //this.xmlParser = xmlParser;
         }
 
         public async Task<TResponse<PrivateBillingBaseInfo>> SyncBillingBaseItemsAsync(int billingBaseId)
@@ -91,15 +87,15 @@ namespace rp.Accounting.App.Services
             catch { return new TResponse<PrivateBillingBaseInfo>(ServiceCode.InternalServerError); }
         }
 
-        public async Task<TResponse<string>> GetExcelSheetAsync(int id)
+        public async Task<TResponse<FileInfo>> GetExcelSheetAsync(int id)
         {
             var billingBase = await repo.GetByIdAsync(id);
-            if (billingBase is null) return new TResponse<string>(ServiceCode.NotFound);
+            if (billingBase is null) return new TResponse<FileInfo>(ServiceCode.NotFound);
 
             using var parser = new XMLParser();
-            parser.BuildPrivateBillingBaseXML(billingBase);
+            parser.BuildBillingBaseXML(billingBase);
 
-            return new TResponse<string>($"{parser.URL}/{parser.File}");
+            return new TResponse<FileInfo>(new FileInfo(parser.File, parser.URL));
         }
     }
 }

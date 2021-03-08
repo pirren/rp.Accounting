@@ -24,7 +24,7 @@ namespace rp.Accounting.App.Services
                 var newCustomer = request.ToDomain();
                 await repo.AddAsync(newCustomer);
                 await repo.CompleteAsync();
-                return new TResponse<object>(newCustomer);
+                return new TResponse<object>(true, ServiceCode.Ok);
             }
             catch
             {

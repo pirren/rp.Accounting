@@ -16,20 +16,28 @@ namespace rp.Accounting.XMLParsing
 
         private const string BASE_URL = @"BillingBase";
 
-        public void BuildPrivateBillingBaseXML(PrivateBillingBase billingBase)
+        public void BuildBillingBaseXML(TBillingBase baseObject)
         {
-            var urlBuilder = new UrlBuilder(BASE_URL, billingBase.Date, "Privat");
+            var billingBasee = ExtractType(baseObject);
 
-            _file = urlBuilder.File;
-            _url = urlBuilder.Url;
+            var urlBuilder = new UrlBuilder(BASE_URL, billingBasee.Date, "Privat");
+            (_url, _file) = urlBuilder.GetFullUrl();
 
             using var workbook = new XLWorkbook();
 
-            var worksheet = workbook.Worksheets.Add($"Privat underlag {billingBase.Date.Year} - {billingBase.Date.Month}");
+            var worksheet = workbook.Worksheets.Add($"Privat underlag {billingBasee.Date.Year} - {billingBasee.Date.Month}");
             worksheet.Cell("A1").Value = "Hello World!";
             worksheet.Cell("A2").FormulaA1 = "=MID(A1, 7, 5)";
             workbook.SaveAs($"{_url}/{_file}");
         }
+
+        private static TBillingBase ExtractType(TBillingBase billingBase)
+            => billingBase switch
+            {
+                PrivateBillingBase => billingBase as PrivateBillingBase,
+                _ => billingBase as PrivateBillingBase
+            };
+        
 
         public void Dispose()
         {
@@ -40,12 +48,15 @@ namespace rp.Accounting.XMLParsing
 
     class UrlBuilder
     {
-        public string Url { get; private set; }
-        public string File { get; private set; }
+        private readonly string _url;
+        private readonly string _file;
+
         public UrlBuilder(string baseUrl, DateTime date, string type)
         {
-            Url = $"{baseUrl}/{type}";
-            File = $"fakturaunderlag_{type.ToLower()}_{date.Year}-{date.Month}.xlsx";
+            _url = $"{baseUrl}/{type}";
+            _file = $"fakturaunderlag_{type.ToLower()}_{date.Year}-{date.Month}.xlsx";
         }
+
+        public (string, string) GetFullUrl() => (_url, _file);
     }
 }

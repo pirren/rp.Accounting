@@ -1,6 +1,7 @@
 ﻿using Moq;
 using rp.Accounting.App.Infrastructure.Interfaces;
 using rp.Accounting.App.Models.InfoModels;
+using rp.Accounting.App.Models.RequestModels;
 using rp.Accounting.App.Services;
 using rp.Accounting.App.Services.Communication;
 using rp.Accounting.Domain;
@@ -183,6 +184,52 @@ namespace rp.Accounting.Tests.Services
             Assert.Null(result.Entity);
             Assert.False(result.Success);
             Assert.True(result.Code == ServiceCode.NotFound);
+        }
+        #endregion
+
+        #region UpdateCustomerAsync Tests
+        [Fact]
+        public async Task UpdateCustomerAsync_UpdatedCustomer_ReturnsExpectedResponse()
+        {
+            // arrange
+            var repo = new Mock<ICustomerRepository>();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
+            var request = new CustomerRequest() { Email = "changed@emailaddress.com" };
+            repo.Setup(s => s.GetCustomerById(1))
+                .ReturnsAsync(customers[0]);
+            var service = new CustomerService(repo.Object);
+
+            // act
+            var result = await service.UpdateCustomerAsync(1, request);
+
+            // assert
+            Assert.IsType<TResponse<object>>(result);
+            Assert.True(result.Success);
+            Assert.True(result.Code == ServiceCode.Ok);
+            Assert.Null(result.Entity);
+        }
+        #endregion
+
+        #region AddCustomerAsync Tests
+        [Fact]
+        public async Task AddCustomerAsync_AddedCustomer_ReturnsExpectedResponse()
+        {
+            // arrange
+            var repo = new Mock<ICustomerRepository>();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
+            var request = new CustomerRequest() { Email = "test@emailaddress.com", FirstName = "Testsson", Type = "Privat" };
+            repo.Setup(s => s.GetCustomerById(1))
+                .ReturnsAsync(customers[0]);
+            var service = new CustomerService(repo.Object);
+
+            // act
+            var result = await service.AddCustomerAsync(request);
+
+            // assert
+            Assert.IsType<TResponse<object>>(result);
+            Assert.True(result.Success);
+            Assert.True(result.Code == ServiceCode.Ok);
+            Assert.Null(result.Entity);
         }
         #endregion
     }

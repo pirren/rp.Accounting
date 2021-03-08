@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace rp.Accounting.Domain
 {
-    public class PrivateBillingBase : IIdentifier
+    public class PrivateBillingBase : IIdentifier, TBillingBase
     {
         public int Id { get; private set; }
         public DateTime Date { get; private set; } = DateTime.Now;

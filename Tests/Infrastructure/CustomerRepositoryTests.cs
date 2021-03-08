@@ -223,5 +223,118 @@ namespace rp.Accounting.Tests.Infrastructure
             Assert.Null(result);
         }
         #endregion
+        
+        #region GetPrivateInactive Tests
+        [Fact]
+        public async Task GetPrivateInactive_InactiveCustomersExist_ReturnsExpectedCount()
+        {
+            // arrange
+            var ctx = new Mock<RpContext>();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
+            customers.First(c => c.Type == CustomerType.Private).Active = false;
+            ctx.Setup(s => s.Customers).ReturnsDbSet(customers);
+            var repo = new CustomerRepository(ctx.Object);
+
+            // act
+            var result = await repo.GetPrivateInactiveCustomers();
+
+            // assert
+            Assert.IsType<List<Customer>>(result);
+            Assert.True(result.Where(r => !r.Active).Count() == 1);
+        }
+
+        [Fact]
+        public async Task GetPrivateInactive_NoInactiveCustomers_ReturnsNoResults()
+        {
+            // arrange
+            var ctx = new Mock<RpContext>();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
+            ctx.Setup(s => s.Customers).ReturnsDbSet(customers);
+            var repo = new CustomerRepository(ctx.Object);
+
+            // act
+            var result = await repo.GetPrivateInactiveCustomers();
+
+            // assert
+            Assert.IsType<List<Customer>>(result);
+            Assert.True(result.Where(r => !r.Active).Count() == 0);
+        }
+        #endregion
+
+        #region GetCompanyInactiveCustomers Tests
+        [Fact]
+        public async Task GetCompanyInactiveCustomers_InactiveCustomersExist_ReturnsExpectedCount()
+        {
+            // arrange
+            var ctx = new Mock<RpContext>();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
+            customers.First(c => c.Type == CustomerType.Company).Active = false;
+            ctx.Setup(s => s.Customers).ReturnsDbSet(customers);
+            var repo = new CustomerRepository(ctx.Object);
+
+            // act
+            var result = await repo.GetCompanyInactiveCustomers();
+
+            // assert
+            Assert.IsType<List<Customer>>(result);
+            Assert.True(result.Where(r => !r.Active).Count() == 1);
+        }
+
+        [Fact]
+        public async Task GetCompanyInactiveCustomers_NoInactiveCustomers_ReturnsNoResults()
+        {
+            // arrange
+            var ctx = new Mock<RpContext>();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
+            ctx.Setup(s => s.Customers).ReturnsDbSet(customers);
+            var repo = new CustomerRepository(ctx.Object);
+
+            // act
+            var result = await repo.GetCompanyInactiveCustomers();
+
+            // assert
+            Assert.IsType<List<Customer>>(result);
+            Assert.True(result.Where(r => !r.Active).Count() == 0);
+        }
+        #endregion
+
+        #region GetInactiveCustomers Tests
+        [Fact]
+        public async Task GetInactiveCustomers_InactiveCustomersExist_ReturnsExpectedCount()
+        {
+            // arrange
+            var ctx = new Mock<RpContext>();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
+            customers[0].Active = false;
+            customers[1].Active = false;
+            customers[2].Active = false;
+            ctx.Setup(s => s.Customers).ReturnsDbSet(customers);
+            var repo = new CustomerRepository(ctx.Object);
+
+            // act
+            var result = await repo.GetInactiveCustomers();
+
+            // assert
+            Assert.IsType<List<Customer>>(result);
+            Assert.True(result.Where(r => !r.Active).Count() == 3);
+        }
+
+        [Fact]
+        public async Task GetInactiveCustomers_NoInactiveCustomers_ReturnsNoResults()
+        {
+            // arrange
+            var ctx = new Mock<RpContext>();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
+            ctx.Setup(s => s.Customers).ReturnsDbSet(customers);
+            var repo = new CustomerRepository(ctx.Object);
+
+            // act
+            var result = await repo.GetInactiveCustomers();
+
+            // assert
+            Assert.IsType<List<Customer>>(result);
+            Assert.True(result.Where(r => !r.Active).Count() == 0);
+        }
+        #endregion
     }
 }

@@ -10,6 +10,6 @@ namespace rp.Accounting.App.Services.Interfaces
         Task<TResponse<PrivateBillingBaseInfo>> GetEarlierBillingBaseAsync(int year, int month);
         Task<TResponse<PrivateBillingBaseInfo>> SyncBillingBaseItemsAsync(int billingBaseId);
         Task<TResponse<PrivateBillingBaseInfo>> UpdateBillingBaseAsync(PrivateBillingBaseInfo dto);
-        Task<TResponse<string>> GetExcelSheetAsync(int id);
+        Task<TResponse<FileInfo>> GetExcelSheetAsync(int id);
     }
 }
