@@ -12,8 +12,6 @@ using rp.Accounting.App.Infrastructure.Interfaces;
 using rp.Accounting.App.Services;
 using rp.Accounting.App.Services.Interfaces;
 using rp.Accounting.DataAccess;
-using rp.Accounting.XMLParsing;
-using rp.Accounting.XMLParsing.Interfaces;
 
 namespace rp.Accounting.App
 {

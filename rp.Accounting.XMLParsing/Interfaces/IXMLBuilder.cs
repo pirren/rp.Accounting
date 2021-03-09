@@ -2,7 +2,7 @@
 
 namespace rp.Accounting.XMLParsing.Interfaces
 {
-    public interface IXMLParser
+    public interface IXMLBuilder
     {
         void BuildBillingBaseXML(TBillingBase billingBase);
     }

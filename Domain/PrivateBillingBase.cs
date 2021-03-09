@@ -79,9 +79,9 @@ namespace rp.Accounting.Domain
         public int Id { get; private set; }
         public PrivateBillingBase PrivateBillingBase { get; private set; }
         public Customer Customer { get; private set; }
-        public string WeeksAttended { get; set; }
+        public string WeeksAttended { get; set; } = "";
         public int AmountOccassions { get; set; }
-        public string HoursPerVisit { get; set; }
+        public string HoursPerVisit { get; set; } = "";
         public double TotalHours { get; set; }
         public double PricePerHour { get; set; }
         public double ExVAT { get; private set; }
