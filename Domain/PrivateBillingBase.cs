@@ -10,6 +10,11 @@ namespace rp.Accounting.Domain
         public DateTime Date { get; private set; } = DateTime.Now;
         public ICollection<PrivateBillingBaseItem> Items { get; private set; }
 
+        public PrivateBillingBase()
+        { }
+
+        public PrivateBillingBase(int id) { Id = id; }
+
         /// <summary>
         /// Updates the HourlyPrices of all customers
         /// </summary>
@@ -67,8 +72,6 @@ namespace rp.Accounting.Domain
                 Items.Add(new PrivateBillingBaseItem(this, customer) { PricePerHour = customer.HourlyFee ?? 0.0 });
             return this;
         }
-
-        public PrivateBillingBase() { }
     }
 
     public class PrivateBillingBaseItem : IIdentifier

@@ -18,5 +18,17 @@ namespace rp.Accounting.Tests.TestHelpers
                 new Customer(8, "Apple Göteborg", CustomerType.Company),
                 new Customer(9, "Grönsaksboden i Solna", CustomerType.Company)
             };
+
+        public List<PrivateBillingBase> GetQueryablePrivateBillingBaseMockSet()
+        {
+            var customers = GetQueryableCustomerMockSet();
+
+            var billingBase1 = new PrivateBillingBase(1);
+            var billingBase2 = new PrivateBillingBase(2);
+            billingBase1.PopulateNew(customers);
+            billingBase2.PopulateNew(customers);
+
+            return new List<PrivateBillingBase> { billingBase1, billingBase2 };
+        }
     }
 }
