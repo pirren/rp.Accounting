@@ -92,8 +92,8 @@ namespace rp.Accounting.App.Services
             var billingBase = await repo.GetByIdAsync(id);
             if (billingBase is null) return new TResponse<FileInfo>(ServiceCode.NotFound);
 
-            using var parser = new XMLBuilder();
-            parser.BuildBillingBaseXML(billingBase);
+            var parser = new XMLBuilder();
+            if (!parser.BuildBillingBaseXML(billingBase)) return new TResponse<FileInfo>(ServiceCode.InternalServerError);
 
             return new TResponse<FileInfo>(new FileInfo(parser.FileName, parser.URL));
         }

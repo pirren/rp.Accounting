@@ -44,7 +44,7 @@ else
         <div class="form-group mt-3">
             <button type="submit" class="btn btn-primary">Spara förändringar <i class="oi oi-check"></i></button>
             <a role="button" href="" @onclick:preventDefault class="btn btn-primary" @onclick="(() => SyncBillingBaseAsync())">Läs om innehåll <i class="oi oi-action-redo"></i></a>
-            <a role="button" href="" @onclick:preventDefault class="btn btn-success" @onclick="(() => TryDownloadExcelAsync())">Ladda ner Excel <i class="oi oi-data-transfer-download"></i></a>
+            <a role="button" href="" @onclick:preventDefault class="btn btn-success" @onclick="(() => TryDownloadExcelAsync())">Exportera Excel <i class="oi oi-data-transfer-download"></i></a>
         </div>
     </EditForm>
 }
@@ -53,7 +53,6 @@ else
     [Inject] IPrivateBillingBaseService BillingBaseService { get; set; }
     [Inject] IToastService ToastService { get; set; }
     [Inject] NavigationManager Nav { get; set; }
-    [Inject] IJSRuntime Js { get; set; }
 
     private PrivateBillingBaseInfo BillingBase;
     private int Id;
@@ -128,10 +127,12 @@ else
             return;
         }
         var result = await BillingBaseService.GetExcelSheetAsync(Id);
-        if (result.Success)
-            ToastService.ShowInfo(result.Entity.FileName, "Underlag redo");
+        if (!result.Success)
+        {
+            ToastService.ShowInfo("Kunde inte exportera excelfil", "Något gick snett");
+            return;
+        }
 
-        await Js.InvokeVoidAsync("downloadFromUrl",
-          new { Url = result.Entity.Url, FileName = result.Entity.FileName });
+        ToastService.ShowInfo(result.Entity.FileName, "Underlag redo");
     }
 }

@@ -1,3 +1,4 @@
 rp.Accounting.db
 *.db-shm
 *.db-wal
+Fakturaunderlag/

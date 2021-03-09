@@ -74,7 +74,7 @@ namespace rp.Accounting.Domain
         }
     }
 
-    public class PrivateBillingBaseItem : IIdentifier
+    public class PrivateBillingBaseItem : TBillingBaseItem, IIdentifier
     {
         public int Id { get; private set; }
         public PrivateBillingBase PrivateBillingBase { get; private set; }
