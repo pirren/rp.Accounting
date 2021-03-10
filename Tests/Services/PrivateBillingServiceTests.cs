@@ -67,7 +67,7 @@ namespace rp.Accounting.Tests.Services
             var repo = new Mock<IPrivateBillingRepository>();
             var billings = seedHelper.GetQueryablePrivateBillingMockSet();
             int id = 99;
-            repo.Setup(s => s.GetBillingByIdAsync(id)).ReturnsAsync(billings.First(f => f.Id == id));
+            repo.Setup(s => s.GetBillingByIdAsync(id)).ReturnsAsync(billings.FirstOrDefault(f => f.Id == id));
             var service = new PrivateBillingService(repo.Object);
 
             // act
