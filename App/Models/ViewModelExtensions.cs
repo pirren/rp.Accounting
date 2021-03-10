@@ -72,19 +72,19 @@ namespace rp.Accounting.App.Models
         #endregion
 
         #region PrivatBillingBase Mapping
-        public static PrivateBillingBaseInfo ToDto(this PrivateBillingBase billingBase)
-            => new PrivateBillingBaseInfo
+        public static PrivateBillingInfo ToDto(this PrivateBilling billingBase)
+            => new PrivateBillingInfo
             {
                 Id = billingBase.Id,
                 Date = billingBase.Date,
                 Items = billingBase.Items.Select(i => i.ToDto()).ToList()
             };
 
-        public static PrivateBillingBaseItemInfo ToDto(this PrivateBillingBaseItem bb)
-            => new PrivateBillingBaseItemInfo
+        public static PrivateBillingItemInfo ToDto(this PrivateBillingItem bb)
+            => new PrivateBillingItemInfo
             {
                 Id = bb.Id,
-                PrivateBillingBaseId = bb.Id,
+                PrivateBillingId = bb.Id,
                 CustomerId = bb.Customer.Id,
                 FirstName = bb.Customer.FirstName,
                 LastName = bb.Customer.LastName,

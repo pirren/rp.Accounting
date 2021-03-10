@@ -50,21 +50,21 @@ else
 }
 
 @code {
-    [Inject] IPrivateBillingBaseService BillingBaseService { get; set; }
+    [Inject] IPrivateBillingService BillingService { get; set; }
     [Inject] IToastService ToastService { get; set; }
     [Inject] NavigationManager Nav { get; set; }
 
-    private PrivateBillingBaseInfo BillingBase;
+    private PrivateBillingInfo BillingBase;
     private int Id;
 
     protected async override Task OnInitializedAsync()
     {
-        var result = await BillingBaseService.GetCurrentBillingBaseAsync();
+        var result = await BillingService.GetCurrentBillingAsync();
         Id = result.Entity.Id;
         BillingBase = result.Entity;
     }
 
-    private void UpdateValues(PrivateBillingBaseItemInfo item)
+    private void UpdateValues(PrivateBillingItemInfo item)
     {
         if (!double.TryParse(item.TotalHours, out double totalHours)) return;
         item.ExVAT = totalHours * item.PricePerHour;
@@ -94,7 +94,7 @@ else
     private async Task<bool> TrySaveAsync(bool showToast = true)
     {
         if (!ParseSendData()) return false;
-        var result = await BillingBaseService.UpdateBillingBaseAsync(BillingBase);
+        var result = await BillingService.UpdateBillingAsync(BillingBase);
         if (!result.Success)
         {
             if (showToast) ToastService.ShowWarning("Lyckades inte spara", "Ajdå");
@@ -108,7 +108,7 @@ else
 
     private async void SyncBillingBaseAsync()
     {
-        var result = await BillingBaseService.SyncBillingBaseItemsAsync(Id);
+        var result = await BillingService.SyncBillingItemsAsync(Id);
         if (result.Success)
         {
             ToastService.ShowInfo("Fakturaunderlaget uppdaterades", "Info");
@@ -126,7 +126,7 @@ else
             ToastService.ShowWarning("Kunde inte spara dokumentet innan nedladdning", "Ajdå");
             return;
         }
-        var result = await BillingBaseService.GetExcelSheetAsync(Id);
+        var result = await BillingService.GetExcelSheetAsync(Id);
         if (!result.Success)
         {
             ToastService.ShowInfo("Kunde inte exportera excelfil", "Något gick snett");

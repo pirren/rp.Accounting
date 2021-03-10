@@ -11,62 +11,62 @@ using System.Threading.Tasks;
 
 namespace rp.Accounting.App.Services
 {
-    public class PrivateBillingBaseService : IPrivateBillingBaseService
+    public class PrivateBillingService : IPrivateBillingService
     {
-        private readonly IPrivateBillingBaseRepository repo;
-        public PrivateBillingBaseService(IPrivateBillingBaseRepository repo)
+        private readonly IPrivateBillingRepository repo;
+        public PrivateBillingService(IPrivateBillingRepository repo)
         {
             this.repo = repo;
         }
 
-        public async Task<TResponse<PrivateBillingBaseInfo>> SyncBillingBaseItemsAsync(int billingBaseId)
+        public async Task<TResponse<PrivateBillingInfo>> SyncBillingItemsAsync(int billingBaseId)
         {
-            var billingBase = await repo.GetByIdAsync(billingBaseId);
-            if (billingBase == null) return new TResponse<PrivateBillingBaseInfo>(ServiceCode.NotFound);
+            var billingBase = await repo.GetBillingByIdAsync(billingBaseId);
+            if (billingBase == null) return new TResponse<PrivateBillingInfo>(ServiceCode.NotFound);
 
             var customers = await repo.GetPrivateCustomers();
-            var inactiveCustomers = await repo.GetInactiveCustomers();
+            var inactiveCustomers = await repo.GetPrivateInactiveCustomers();
             try
             {
                 billingBase.ClearInactiveCustomers(inactiveCustomers);
                 billingBase.EnterUnhousedCustomers(customers);
                 billingBase.UpdateHourlyPrices();
                 await repo.CompleteAsync();
-                return new TResponse<PrivateBillingBaseInfo>(billingBase.ToDto());
+                return new TResponse<PrivateBillingInfo>(billingBase.ToDto());
             }
-            catch { return new TResponse<PrivateBillingBaseInfo>(ServiceCode.InternalServerError); }
+            catch { return new TResponse<PrivateBillingInfo>(ServiceCode.InternalServerError); }
         }
 
         /// <summary>
         /// Gets the monthly active BillingBase, or creates one if it does not exist.
         /// </summary>
         /// <returns>Active BillingBase</returns>
-        public async Task<TResponse<PrivateBillingBaseInfo>> GetCurrentBillingBaseAsync()
+        public async Task<TResponse<PrivateBillingInfo>> GetCurrentBillingAsync()
         {
-            var billingBase = await repo.GetCurrentBillingBaseAsync();
-            if (billingBase != null) return new TResponse<PrivateBillingBaseInfo>(billingBase.ToDto());
+            var billingBase = await repo.GetCurrentBillingAsync();
+            if (billingBase != null) return new TResponse<PrivateBillingInfo>(billingBase.ToDto());
 
             var privateCustomers = await repo.GetPrivateCustomers();
-            var newBillingBase = new PrivateBillingBase()
+            var newBillingBase = new PrivateBilling()
                 .PopulateNew(privateCustomers);
 
             try
             {
                 await repo.AddAsync(newBillingBase);
                 await repo.CompleteAsync();
-                return new TResponse<PrivateBillingBaseInfo>(newBillingBase.ToDto());
+                return new TResponse<PrivateBillingInfo>(newBillingBase.ToDto());
             }
-            catch { return new TResponse<PrivateBillingBaseInfo>(ServiceCode.InternalServerError); }
+            catch { return new TResponse<PrivateBillingInfo>(ServiceCode.InternalServerError); }
         }
 
-        public Task<TResponse<PrivateBillingBaseInfo>> GetEarlierBillingBaseAsync(int year, int month)
+        public Task<TResponse<PrivateBillingInfo>> GetEarlierBillingAsync(int year, int month)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<TResponse<PrivateBillingBaseInfo>> UpdateBillingBaseAsync(PrivateBillingBaseInfo dto)
+        public async Task<TResponse<PrivateBillingInfo>> UpdateBillingAsync(PrivateBillingInfo dto)
         {
-            var billingBase = await repo.GetByIdAsync(dto.Id);
+            var billingBase = await repo.GetBillingByIdAsync(dto.Id);
             foreach (var item in billingBase.Items)
             {
                 var dtoItem = dto.Items.Where(s => s.Id == item.Id).FirstOrDefault();
@@ -82,14 +82,14 @@ namespace rp.Accounting.App.Services
             {
                 repo.Update(billingBase);
                 await repo.CompleteAsync();
-                return new TResponse<PrivateBillingBaseInfo>(billingBase.ToDto());
+                return new TResponse<PrivateBillingInfo>(billingBase.ToDto());
             }
-            catch { return new TResponse<PrivateBillingBaseInfo>(ServiceCode.InternalServerError); }
+            catch { return new TResponse<PrivateBillingInfo>(ServiceCode.InternalServerError); }
         }
 
         public async Task<TResponse<FileInfo>> GetExcelSheetAsync(int id)
         {
-            var billingBase = await repo.GetByIdAsync(id);
+            var billingBase = await repo.GetBillingByIdAsync(id);
             if (billingBase is null) return new TResponse<FileInfo>(ServiceCode.NotFound);
 
             var parser = new XMLBuilder();

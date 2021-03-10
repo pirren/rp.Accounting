@@ -20,27 +20,27 @@ namespace rp.Accounting.XMLParsing
         /// <summary>
         /// Builds an excel sheet from any BillingBase type
         /// </summary>
-        /// <param name="billingBase"></param>
-        public bool BuildBillingBaseXML(TBillingBase billingBase)
+        /// <param name="billing"></param>
+        public bool BuildBillingBaseXML(TBilling billing)
         {
-            URL = @$"{BASEURL}\{billingBase.Date:yyyy-MMM}";
+            URL = @$"{BASEURL}\{billing.Date:yyyy-MMM}";
 
-            if (billingBase is PrivateBillingBase)
+            if (billing is PrivateBilling privateBilling)
             {
-                FileName = $"fakturaunderlag_privat_{billingBase.Date:yyyy-MMM}.xlsx";
-                return BuildPrivateXML((PrivateBillingBase) billingBase);
+                FileName = $"fakturaunderlag_privat_{billing.Date:yyyy-MMM}.xlsx";
+                return BuildPrivateXML(privateBilling);
             }
             return false;
         }
 
-        private bool BuildPrivateXML(PrivateBillingBase billingBase)
+        private bool BuildPrivateXML(PrivateBilling billing)
         {
             using var workbook = new XLWorkbook();
-            var ws = workbook.Worksheets.Add($"Privat underlag {billingBase.Date:yyyy-MMM}");
+            var ws = workbook.Worksheets.Add($"Privat underlag {billing.Date:yyyy-MMM}");
             var privateSheet = new PrivateXMLSheet { Worksheet = ws };
             
             int rowNumber = 0;
-            var allItems = billingBase.Items.ToList();
+            var allItems = billing.Items.ToList();
             privateSheet.BuildHeader();
             privateSheet.BuildItems(allItems, ref rowNumber);
             privateSheet.BuildTotal(allItems, ref rowNumber);

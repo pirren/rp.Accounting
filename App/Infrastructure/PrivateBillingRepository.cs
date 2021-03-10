@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace rp.Accounting.App.Infrastructure
 {
-    public class PrivateBillingBaseRepository : CustomerRepository, IPrivateBillingBaseRepository
+    public class PrivateBillingRepository : CustomerRepository, IPrivateBillingRepository
     {
-        public PrivateBillingBaseRepository(RpContext ctx) : base(ctx)
+        public PrivateBillingRepository(RpContext ctx) : base(ctx)
         { }
 
-        public async Task<PrivateBillingBase> GetByIdAsync(int id)
+        public async Task<PrivateBilling> GetBillingByIdAsync(int id)
         {
             return await ctx.PrivateBillingBases.Where(s => s.Id == id)
                 .Include(i => i.Items)
@@ -21,7 +21,7 @@ namespace rp.Accounting.App.Infrastructure
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<PrivateBillingBase> GetCurrentBillingBaseAsync()
+        public async Task<PrivateBilling> GetCurrentBillingAsync()
         {
             var dtNow = DateTime.Now;
             return await ctx.PrivateBillingBases
@@ -31,7 +31,7 @@ namespace rp.Accounting.App.Infrastructure
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<PrivateBillingBase> GetEarlierBillingBaseAsync(DateTime date, Type type)
+        public async Task<PrivateBilling> GetEarlierBillingAsync(DateTime date, Type type)
         {
             throw new NotImplementedException();
         }

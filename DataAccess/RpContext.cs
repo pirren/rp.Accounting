@@ -7,8 +7,8 @@ namespace rp.Accounting.DataAccess
     public class RpContext : DbContext
     {
         public virtual DbSet<Customer> Customers { get; set; }
-        public virtual DbSet<PrivateBillingBase> PrivateBillingBases { get; set; }
-        public virtual DbSet<PrivateBillingBaseItem> PrivateBillingBaseItems { get; set; }
+        public virtual DbSet<PrivateBilling> PrivateBillingBases { get; set; }
+        public virtual DbSet<PrivateBillingItem> PrivateBillingBaseItems { get; set; }
 
         public RpContext()
         { }
@@ -27,11 +27,11 @@ namespace rp.Accounting.DataAccess
             cust.Property(p => p.Registered).IsRequired();
             cust.Property(p => p.Type).HasConversion<string>();
 
-            var pbb = modelBuilder.Entity<PrivateBillingBase>();
+            var pbb = modelBuilder.Entity<PrivateBilling>();
             pbb.HasKey(p => p.Id);
             pbb.Property(p => p.Date).IsRequired();
 
-            var pbbi = modelBuilder.Entity<PrivateBillingBaseItem>();
+            var pbbi = modelBuilder.Entity<PrivateBillingItem>();
             pbbi.HasKey(p => p.Id);
             pbbi.HasOne(p => p.PrivateBillingBase)
                 .WithMany(p => p.Items)

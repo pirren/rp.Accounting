@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace rp.Accounting.Domain
 {
-    public interface TBillingBase
+    public interface TBilling
     {
         public int Id { get; }
         public DateTime Date { get; }
     }
 
-    public interface TBillingBaseItem
+    public interface TBillingItem
     { }
 }

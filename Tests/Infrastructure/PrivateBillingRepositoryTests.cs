@@ -9,60 +9,60 @@ using Xunit;
 
 namespace rp.Accounting.Tests.Infrastructure
 {
-    public class PrivateBillingBaseRepositoryTests
+    public class PrivateBillingRepositoryTests
     {
         private readonly SeedHelper seedHelper;
-        public PrivateBillingBaseRepositoryTests() => this.seedHelper = new SeedHelper();
+        public PrivateBillingRepositoryTests() => this.seedHelper = new SeedHelper();
 
-        #region GetCurrentBillingBaseAsync Tests
+        #region GetCurrentBillingAsync Tests
         [Fact]
         public async Task GetCurrentBillingBaseAsync_Ongoing_ReturnsExpectedObjects()
         {
             // arrange
             var ctx = new Mock<RpContext>();
-            var billingBases = seedHelper.GetQueryablePrivateBillingBaseMockSet();
+            var billingBases = seedHelper.GetQueryablePrivateBillingMockSet();
             ctx.Setup(s => s.PrivateBillingBases).ReturnsDbSet(billingBases);
-            var repo = new PrivateBillingBaseRepository(ctx.Object);
+            var repo = new PrivateBillingRepository(ctx.Object);
 
             // act
-            var result = await repo.GetCurrentBillingBaseAsync();
+            var result = await repo.GetCurrentBillingAsync();
 
             // assert
-            Assert.IsType<PrivateBillingBase>(result);
+            Assert.IsType<PrivateBilling>(result);
             Assert.True(result.Id == 1);
         }
         #endregion
 
-        #region GetByIdAsync Tests
+        #region GetBillingByIdAsync Tests
         [Fact]
-        public async Task GetByIdAsync_IdExists_ReturnsExpectedObject()
+        public async Task GetBillingByIdAsync_IdExists_ReturnsExpectedObject()
         {
             // arrange
             var ctx = new Mock<RpContext>();
             int id = 1;
-            var billingBases = seedHelper.GetQueryablePrivateBillingBaseMockSet();
+            var billingBases = seedHelper.GetQueryablePrivateBillingMockSet();
             ctx.Setup(s => s.PrivateBillingBases).ReturnsDbSet(billingBases);
-            var repo = new PrivateBillingBaseRepository(ctx.Object);
+            var repo = new PrivateBillingRepository(ctx.Object);
 
             // act
-            var result = await repo.GetByIdAsync(id);
+            var result = await repo.GetBillingByIdAsync(id);
 
             // assert
-            Assert.IsType<PrivateBillingBase>(result);
+            Assert.IsType<PrivateBilling>(result);
             Assert.True(result.Id == id);
         }
 
         [Fact]
-        public async Task GetByIdAsync_IdDoesNotExists_ReturnsNull()
+        public async Task GetBillingByIdAsync_IdDoesNotExists_ReturnsNull()
         {
             // arrange
             var ctx = new Mock<RpContext>();
-            var billingBases = seedHelper.GetQueryablePrivateBillingBaseMockSet();
+            var billingBases = seedHelper.GetQueryablePrivateBillingMockSet();
             ctx.Setup(s => s.PrivateBillingBases).ReturnsDbSet(billingBases);
-            var repo = new PrivateBillingBaseRepository(ctx.Object);
+            var repo = new PrivateBillingRepository(ctx.Object);
 
             // act
-            var result = await repo.GetByIdAsync(99);
+            var result = await repo.GetBillingByIdAsync(99);
 
             // assert
             Assert.Null(result);

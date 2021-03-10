@@ -1,9 +1,9 @@
 ﻿namespace rp.Accounting.App.Models.InfoModels
 {
-    public class PrivateBillingBaseItemInfo
+    public class PrivateBillingItemInfo
     {
         public int Id { get; set; }
-        public int PrivateBillingBaseId { get; set; }
+        public int PrivateBillingId { get; set; }
         public int CustomerId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

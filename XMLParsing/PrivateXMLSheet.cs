@@ -28,7 +28,7 @@ namespace rp.Accounting.XMLParsing
 
         public void BuildItems<T>(List<T> items, ref int rowNumber) where T : class
         {
-            var allItems = items.Cast<PrivateBillingBaseItem>().ToList();
+            var allItems = items.Cast<PrivateBillingItem>().ToList();
             for (int i = 0; i < allItems.Count; i++)
             {
                 var item = allItems[i];
@@ -47,7 +47,7 @@ namespace rp.Accounting.XMLParsing
 
         public void BuildTotal<T>(List<T> items, ref int rowNumber) where T : class
         {
-            var allItems = items.Cast<PrivateBillingBaseItem>().ToList();
+            var allItems = items.Cast<PrivateBillingItem>().ToList();
 
             var exVatList = allItems.Where(i => i.ExVAT > 0).Select(s => s.ExVAT).ToList();
             var exVatSum = exVatList.Any() ? exVatList.Aggregate((x, y) => x + y) : 0.0;

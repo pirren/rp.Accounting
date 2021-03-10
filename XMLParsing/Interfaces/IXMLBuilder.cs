@@ -4,6 +4,6 @@ namespace rp.Accounting.XMLParsing.Interfaces
 {
     public interface IXMLBuilder
     {
-        bool BuildBillingBaseXML(TBillingBase billingBase);
+        bool BuildBillingBaseXML(TBilling billingBase);
     }
 }

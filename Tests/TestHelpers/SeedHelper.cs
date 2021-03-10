@@ -1,5 +1,6 @@
 ﻿using rp.Accounting.Domain;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace rp.Accounting.Tests.TestHelpers
 {
@@ -19,16 +20,16 @@ namespace rp.Accounting.Tests.TestHelpers
                 new Customer(9, "Grönsaksboden i Solna", CustomerType.Company)
             };
 
-        public List<PrivateBillingBase> GetQueryablePrivateBillingBaseMockSet()
+        public List<PrivateBilling> GetQueryablePrivateBillingMockSet()
         {
             var customers = GetQueryableCustomerMockSet();
 
-            var billingBase1 = new PrivateBillingBase(1);
-            var billingBase2 = new PrivateBillingBase(2);
-            billingBase1.PopulateNew(customers);
-            billingBase2.PopulateNew(customers);
+            var billing1 = new PrivateBilling(1);
+            var billing2 = new PrivateBilling(2);
+            billing1.PopulateNew(customers.Where(c => c.Type == CustomerType.Private && c.Active).ToList());
+            billing2.PopulateNew(customers.Where(c => c.Type == CustomerType.Private && c.Active).ToList());
 
-            return new List<PrivateBillingBase> { billingBase1, billingBase2 };
+            return new List<PrivateBilling> { billing1, billing2 };
         }
     }
 }

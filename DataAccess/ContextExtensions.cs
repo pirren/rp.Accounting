@@ -69,7 +69,7 @@ namespace rp.Accounting.DataAccess
             #endregion
 
             #region PrivateBillingBase
-            var pbb = modelBuilder.Entity<PrivateBillingBase>();
+            var pbb = modelBuilder.Entity<PrivateBilling>();
             pbb.HasData(new
             {
                 Id = 1,
@@ -78,7 +78,7 @@ namespace rp.Accounting.DataAccess
             #endregion
 
             #region PrivateBillingBaseItems
-            var pbbi = modelBuilder.Entity<PrivateBillingBaseItem>();
+            var pbbi = modelBuilder.Entity<PrivateBillingItem>();
             pbbi.HasData(new
             {
                 Id = 1,

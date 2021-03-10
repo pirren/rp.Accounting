@@ -1,0 +1,83 @@
+﻿using Moq;
+using rp.Accounting.App.Infrastructure.Interfaces;
+using rp.Accounting.App.Models;
+using rp.Accounting.App.Models.InfoModels;
+using rp.Accounting.App.Services;
+using rp.Accounting.App.Services.Communication;
+using rp.Accounting.Domain;
+using rp.Accounting.Tests.TestHelpers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Xunit;
+
+namespace rp.Accounting.Tests.Services
+{
+    public class PrivateBillingServiceTests
+    {
+        private readonly SeedHelper seedHelper;
+        public PrivateBillingServiceTests() => this.seedHelper = new SeedHelper();
+
+        #region GetCurrentBillingAsync Tests
+        [Fact]
+        public async Task GetCurrentBillingAsync_BillingExists_ReturnsBilling()
+        {
+            // arrange
+            var repo = new Mock<IPrivateBillingRepository>();
+            var billings = seedHelper.GetQueryablePrivateBillingMockSet();
+            repo.Setup(s => s.GetCurrentBillingAsync()).ReturnsAsync(billings.FirstOrDefault());
+            var service = new PrivateBillingService(repo.Object);
+
+            // act
+            var result = await service.GetCurrentBillingAsync();
+
+            // assert
+            Assert.IsType<TResponse<PrivateBillingInfo>>(result);
+            Assert.NotNull(result.Entity);
+            Assert.True(result.Success);
+        }
+
+        [Fact]
+        public async Task GetCurrentBillingAsync_NoExistingBilling_ReturnsNewBilling()
+        {
+            // arrange
+            var repo = new Mock<IPrivateBillingRepository>();
+            var billings = seedHelper.GetQueryablePrivateBillingMockSet();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
+            repo.Setup(s => s.GetPrivateCustomers()).ReturnsAsync(customers);
+            var service = new PrivateBillingService(repo.Object);
+
+            // act
+            var result = await service.GetCurrentBillingAsync();
+
+            // assert
+            Assert.IsType<TResponse<PrivateBillingInfo>>(result);
+            Assert.NotNull(result.Entity);
+            Assert.True(result.Success);
+        }
+        #endregion
+
+        #region SyncBillingItemsAsync Tests
+        [Fact]
+        public async Task SyncBillingItemsAsync_BadParameter_ReturnsNoSuccess()
+        {
+            // arrange
+            var repo = new Mock<IPrivateBillingRepository>();
+            var billings = seedHelper.GetQueryablePrivateBillingMockSet();
+            int id = 99;
+            repo.Setup(s => s.GetBillingByIdAsync(id)).ReturnsAsync(billings.First(f => f.Id == id));
+            var service = new PrivateBillingService(repo.Object);
+
+            // act
+            var result = await service.SyncBillingItemsAsync(id);
+
+            // assert
+            Assert.IsType<TResponse<PrivateBillingInfo>>(result);
+            Assert.Null(result.Entity);
+            Assert.False(result.Success);
+        }
+        #endregion
+    }
+}
