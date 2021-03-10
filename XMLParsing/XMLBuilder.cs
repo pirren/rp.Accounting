@@ -1,8 +1,6 @@
 ﻿using ClosedXML.Excel;
 using rp.Accounting.Domain;
 using rp.Accounting.XMLParsing.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace rp.Accounting.XMLParsing
@@ -21,7 +19,7 @@ namespace rp.Accounting.XMLParsing
         /// Builds an excel sheet from any BillingBase type
         /// </summary>
         /// <param name="billing"></param>
-        public bool BuildBillingBaseXML(TBilling billing)
+        public bool BuildBillingXML(TBilling billing)
         {
             URL = @$"{BASEURL}\{billing.Date:yyyy-MMM}";
 

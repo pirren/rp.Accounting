@@ -28,9 +28,9 @@ namespace rp.Accounting.App.Services
             var inactiveCustomers = await repo.GetPrivateInactiveCustomers();
             try
             {
-                billingBase.ClearInactiveCustomers(inactiveCustomers);
-                billingBase.EnterUnhousedCustomers(customers);
-                billingBase.UpdateHourlyPrices();
+                billingBase.ClearInactiveCustomers(inactiveCustomers)
+                    .EnterUnhousedCustomers(customers)
+                    .UpdateHourlyPrices();
                 await repo.CompleteAsync();
                 return new TResponse<PrivateBillingInfo>(billingBase.ToDto());
             }
@@ -93,7 +93,7 @@ namespace rp.Accounting.App.Services
             if (billingBase is null) return new TResponse<FileInfo>(ServiceCode.NotFound);
 
             var parser = new XMLBuilder();
-            if (!parser.BuildBillingBaseXML(billingBase)) return new TResponse<FileInfo>(ServiceCode.InternalServerError);
+            if (!parser.BuildBillingXML(billingBase)) return new TResponse<FileInfo>(ServiceCode.InternalServerError);
 
             return new TResponse<FileInfo>(new FileInfo(parser.FileName, parser.URL));
         }
