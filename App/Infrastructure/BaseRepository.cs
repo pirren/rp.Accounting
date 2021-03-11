@@ -10,7 +10,6 @@ namespace rp.Accounting.App.Infrastructure
     public class BaseRepository : IBaseRepository
     {
         protected readonly RpContext ctx;
-
         public BaseRepository(RpContext ctx) => this.ctx = ctx;
 
         public async Task AddAsync<T>(T entity) where T : class => await ctx.AddAsync(entity);

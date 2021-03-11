@@ -1,9 +1,10 @@
 ﻿@page "/billing/private"
 
-<h3>Privat fakturaunderlag</h3>
+<h3>Underlag privat</h3>
 
 <PageInfo Content="Fakturaunderlag för privata kunder. Ifall du har ändrat på kunduppgifter, eller tagit bort kunder så kan du uppdatera hela underlaget med knappen 'Läs om innehåll' längst ner. Sparad data kommer inte skadas av detta." />
 <p class="h5">Notera att decimaltal måste anges i formatet <mark>5,5</mark>.</p>
+
 @if (BillingBase is null)
 {
     <span>Hittade inget underlag.</span>
@@ -58,7 +59,7 @@ else
         </table>
         <div class="form-group mt-3">
             <button type="submit" class="btn btn-primary">Spara förändringar <i class="oi oi-check"></i></button>
-            <a role="button" href="" @onclick:preventDefault class="btn btn-primary" @onclick="(() => SyncBillingBaseAsync())">Läs om innehåll <i class="oi oi-action-redo"></i></a>
+            <a role="button" href="" @onclick:preventDefault class="btn btn-primary" @onclick="(() => SyncBillingBaseAsync())">Hämta från register <i class="oi oi-action-redo"></i></a>
             <a role="button" href="" @onclick:preventDefault class="btn btn-success" @onclick="(() => TryDownloadExcelAsync())">Exportera Excel <i class="oi oi-data-transfer-download"></i></a>
         </div>
     </EditForm>
@@ -183,7 +184,6 @@ else
             ToastService.ShowInfo("Kunde inte ta bort kund", "Något gick snett");
             return;
         }
-
         ToastService.ShowSuccess("Kund borttagen från underlag", "Ändringar sparade");
         await LoadData();
     }

@@ -1,0 +1,86 @@
+﻿@page "/billing/company"
+
+<h3>Underlag företag</h3>
+
+<PageInfo Content="Fakturaunderlag för privata kunder. Ifall du har ändrat på kunduppgifter, eller tagit bort kunder så kan du uppdatera hela underlaget med knappen 'Läs om innehåll' längst ner. Sparad data kommer inte skadas av detta." />
+<p class="h5">Notera att decimaltal måste anges i formatet <mark>5,5</mark>.</p>
+
+@if (BillingBase is null)
+{
+    <span>Hittade inget underlag.</span>
+}
+else
+{
+    <EditForm Model="@BillingBase.Items" OnValidSubmit="@(() => TrySaveAsync())">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Företag</th>
+                    <th>Email</th>
+                    <th>Noteringar</th>
+                    <th>Ex Moms</th>
+                    <th>Ink Moms</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in BillingBase.Items)
+                {
+                <tr>
+                    <td>@($"{item.Name}")</td>
+                    <td>@item.Email</td>
+                    <td><InputText @bind-Value="@item.ExVAT" class="form-control" placeholder="Ex Moms" /></td>
+                    <td><InputText @bind-Value="@item.Notes" class="form-control" placeholder="Noteringar" /></td>
+                    <td>@item.IncVAT</td>
+                    <td><a role="button" href="" @onclick:preventDefault class="btn btn-sm btn-danger" @onclick="(() => RemoveCustomerAsync(item.Id))"><i class="oi oi-x"></i></a></td>
+                </tr>
+                }
+                <tr>
+                    <td class="font-weight-bold">Totalt</td>
+                    <td></td>
+                    <td></td>
+                    <td class="font-weight-bold">@TotalExVAT</td>
+                    <td class="font-weight-bold">@TotalIncVAT</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="form-group mt-3">
+            <button type="submit" class="btn btn-primary">Spara förändringar <i class="oi oi-check"></i></button>
+            <a role="button" href="" @onclick:preventDefault class="btn btn-primary" @onclick="(() => SyncBillingBaseAsync())">Hämta från register <i class="oi oi-action-redo"></i></a>
+            <a role="button" href="" @onclick:preventDefault class="btn btn-success" @onclick="(() => TryDownloadExcelAsync())">Exportera Excel <i class="oi oi-data-transfer-download"></i></a>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [Inject] IPrivateBillingService BillingService { get; set; }
+    [Inject] IToastService ToastService { get; set; }
+    [Inject] NavigationManager Nav { get; set; }
+
+    private CompanyBillingInfo BillingBase;
+    private int Id;
+
+    private double TotalExVAT;
+    private double TotalIncVAT;
+
+    private async Task TrySaveAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    private async Task RemoveCustomerAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    private async Task SyncBillingBaseAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    private async Task TryDownloadExcelAsync()
+    {
+        throw new NotImplementedException();
+    }
+}

@@ -21,7 +21,7 @@ namespace rp.Accounting.Tests.Infrastructure
             // arrange
             var ctx = new Mock<RpContext>();
             var billingBases = seedHelper.GetQueryablePrivateBillingMockSet();
-            ctx.Setup(s => s.PrivateBillingBases).ReturnsDbSet(billingBases);
+            ctx.Setup(s => s.PrivateBillings).ReturnsDbSet(billingBases);
             var repo = new PrivateBillingRepository(ctx.Object);
 
             // act
@@ -41,7 +41,7 @@ namespace rp.Accounting.Tests.Infrastructure
             var ctx = new Mock<RpContext>();
             int id = 1;
             var billingBases = seedHelper.GetQueryablePrivateBillingMockSet();
-            ctx.Setup(s => s.PrivateBillingBases).ReturnsDbSet(billingBases);
+            ctx.Setup(s => s.PrivateBillings).ReturnsDbSet(billingBases);
             var repo = new PrivateBillingRepository(ctx.Object);
 
             // act
@@ -58,7 +58,7 @@ namespace rp.Accounting.Tests.Infrastructure
             // arrange
             var ctx = new Mock<RpContext>();
             var billingBases = seedHelper.GetQueryablePrivateBillingMockSet();
-            ctx.Setup(s => s.PrivateBillingBases).ReturnsDbSet(billingBases);
+            ctx.Setup(s => s.PrivateBillings).ReturnsDbSet(billingBases);
             var repo = new PrivateBillingRepository(ctx.Object);
 
             // act

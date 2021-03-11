@@ -76,7 +76,7 @@ namespace rp.Accounting.Domain
         public Customer Customer { get; private set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        public string Notes { get; set; }
+        public string Notes { get; set; } = "";
         public double ExVAT { get; set; }
         public double IncVAT { get; private set; }
 

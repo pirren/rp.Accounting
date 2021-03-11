@@ -35,7 +35,7 @@ namespace rp.Accounting.Domain
         /// <param name="lastName"></param>
         public void SetLastName(string lastName)
         {
-            if (this.Type == CustomerType.Company)
+            if (this.Type is CustomerType.Company)
                 return;
             this.LastName = lastName;
         }
@@ -46,7 +46,7 @@ namespace rp.Accounting.Domain
         /// <param name="hourlyFee"></param>
         public void UpdateHourlyPrice(double hourlyFee)
         {
-            if (this.Type == CustomerType.Company)
+            if (this.Type is CustomerType.Company)
                 return;
             this.HourlyFee = hourlyFee;
         }

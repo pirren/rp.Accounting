@@ -68,21 +68,21 @@ namespace rp.Accounting.DataAccess
             });
             #endregion
 
-            #region PrivateBillingBase
-            var pbb = modelBuilder.Entity<PrivateBilling>();
-            pbb.HasData(new
+            #region PrivateBilling
+            var pb = modelBuilder.Entity<PrivateBilling>();
+            pb.HasData(new
             {
                 Id = 1,
                 Date = DateTime.Parse("2021-01-04")
             });
             #endregion
 
-            #region PrivateBillingBaseItems
-            var pbbi = modelBuilder.Entity<PrivateBillingItem>();
-            pbbi.HasData(new
+            #region PrivateBillingItem
+            var pbi = modelBuilder.Entity<PrivateBillingItem>();
+            pbi.HasData(new
             {
                 Id = 1,
-                PrivateBillingBaseId = 1,
+                PrivateBillingId = 1,
                 CustomerId = 1,
                 WeeksAttended = "",
                 AmountOccassions = 0,
@@ -95,7 +95,7 @@ namespace rp.Accounting.DataAccess
             }, new
             {
                 Id = 2,
-                PrivateBillingBaseId = 1,
+                PrivateBillingId = 1,
                 CustomerId = 2,
                 WeeksAttended = "",
                 AmountOccassions = 0,
@@ -108,7 +108,7 @@ namespace rp.Accounting.DataAccess
             }, new
             {
                 Id = 3,
-                PrivateBillingBaseId = 1,
+                PrivateBillingId = 1,
                 CustomerId = 3,
                 WeeksAttended = "",
                 AmountOccassions = 0,
@@ -119,6 +119,40 @@ namespace rp.Accounting.DataAccess
                 IncVAT = 0.0,
                 AfterRUT = 0.0,
             });
+            #endregion
+
+            #region CompanyBilling
+            var cb = modelBuilder.Entity<CompanyBilling>();
+            cb.HasData(new
+            {
+                Id = 1,
+                Date = DateTime.Parse("2021-01-04")
+            });
+            #endregion
+
+            #region CompanyBillingItem
+            var cbi = modelBuilder.Entity<CompanyBillingItem>();
+            cbi.HasData(new
+            {
+                Id = 1,
+                CompanyBillingId = 1,
+                CustomerId = 4,
+                Name = "Akademibokhandeln Lerum",
+                Email = "lerum@akademibokhandeln.se",
+                Notes = "",
+                ExVAT = 0.0,
+                IncVAT = 0.0
+            }, new
+            {
+                Id = 2,
+                CompanyBillingId = 1,
+                CustomerId = 5,
+                Name = "Akademibokhandeln Kungälv",
+                Email = "kungalv@akademibokhandeln.se",
+                Notes = "",
+                ExVAT = 0.0,
+                IncVAT = 0.0
+            }); 
             #endregion
         }
     }

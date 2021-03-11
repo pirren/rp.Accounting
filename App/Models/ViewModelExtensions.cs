@@ -98,5 +98,28 @@ namespace rp.Accounting.App.Models
                 AfterRUT = bb.AfterRUT
             };
         #endregion
+
+        #region CompanyBillingBase Mapping
+        public static CompanyBillingInfo ToDto(this CompanyBilling billingBase)
+            => new CompanyBillingInfo
+            {
+                Id = billingBase.Id,
+                Date = billingBase.Date,
+                Items = billingBase.Items.Select(i => i.ToDto()).ToList()
+            };
+
+        public static CompanyBillingItemInfo ToDto(this CompanyBillingItem bb)
+            => new CompanyBillingItemInfo
+            {
+                Id = bb.Id,
+                CompanyBillingId = bb.Id,
+                CustomerId = bb.Customer.Id,
+                Name = bb.Customer.FirstName,
+                Email = bb.Customer.Email,
+                Notes = bb.Notes,
+                ExVAT = bb.ExVAT.ToString(),
+                IncVAT = bb.IncVAT
+            };
+        #endregion
     }
 }

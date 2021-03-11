@@ -7,8 +7,10 @@ namespace rp.Accounting.DataAccess
     public class RpContext : DbContext
     {
         public virtual DbSet<Customer> Customers { get; set; }
-        public virtual DbSet<PrivateBilling> PrivateBillingBases { get; set; }
-        public virtual DbSet<PrivateBillingItem> PrivateBillingBaseItems { get; set; }
+        public virtual DbSet<PrivateBilling> PrivateBillings { get; set; }
+        public virtual DbSet<PrivateBillingItem> PrivateBillingItems { get; set; }
+        public virtual DbSet<CompanyBilling> CompanyBillings { get; set; }
+        public virtual DbSet<CompanyBillingItem> CompanyBillingItems { get; set; }
 
         public RpContext()
         { }
@@ -27,13 +29,23 @@ namespace rp.Accounting.DataAccess
             cust.Property(p => p.Registered).IsRequired();
             cust.Property(p => p.Type).HasConversion<string>();
 
-            var pbb = modelBuilder.Entity<PrivateBilling>();
-            pbb.HasKey(p => p.Id);
-            pbb.Property(p => p.Date).IsRequired();
+            var pb = modelBuilder.Entity<PrivateBilling>();
+            pb.HasKey(p => p.Id);
+            pb.Property(p => p.Date).IsRequired();
 
-            var pbbi = modelBuilder.Entity<PrivateBillingItem>();
-            pbbi.HasKey(p => p.Id);
-            pbbi.HasOne(p => p.PrivateBilling)
+            var pbi = modelBuilder.Entity<PrivateBillingItem>();
+            pbi.HasKey(p => p.Id);
+            pbi.HasOne(p => p.PrivateBilling)
+                .WithMany(p => p.Items)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            var cb = modelBuilder.Entity<CompanyBilling>();
+            cb.HasKey(p => p.Id);
+            cb.Property(p => p.Date).IsRequired();
+
+            var cbi = modelBuilder.Entity<CompanyBillingItem>();
+            cbi.HasKey(p => p.Id);
+            cbi.HasOne(p => p.CompanyBilling)
                 .WithMany(p => p.Items)
                 .OnDelete(DeleteBehavior.Cascade);
 
