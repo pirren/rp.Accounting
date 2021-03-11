@@ -29,6 +29,19 @@ namespace rp.Accounting.Domain
         }
 
         /// <summary>
+        /// Removes a Customer from the BillingBase
+        /// </summary>
+        /// <param name="id">Id of Customer</param>
+        /// <returns>Customer was found and successfully removed</returns>
+        public bool RemoveCustomer(int id)
+        {
+            var item = Items.FirstOrDefault(i => i.Id == id);
+            if (item is null) return false;
+            Items.Remove(item);
+            return true;
+        }
+
+        /// <summary>
         /// Clears out inactive customers from the BillingBase
         /// </summary>
         /// <param name="inactiveCustomers">List of inactive customers</param>

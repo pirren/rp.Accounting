@@ -1,0 +1,67 @@
+﻿@page "/customer/inactive"
+
+<h3>Tidigare/inaktiva kunder</h3>
+<PageInfo Content="Här är alla tidigare eller inaktiva kunder. Inaktiva kunder syns inte på fakturaunderlag. För att återaktivera en kund klicka på plussknappen till höger i raden." />
+
+@if (Customers != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Förnamn</th>
+                <th>Efternamn</th>
+                <th>Address</th>
+                <th>E-Post</th>
+                <th>Timpris</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in Customers)
+            {
+                <tr>
+                    <td>@customer.FirstName</td>
+                    <td>@customer.LastName</td>
+                    <td>@customer.Address</td>
+                    <td>@customer.Email</td>
+                    <td>@(customer.HourlyFee == null ? "~" : customer.HourlyFee)</td>
+                    <td><a class="btn btn-sm btn-primary" @onclick:preventDefault href="customer/edit/@customer.Id" @onclick="(() => ActivateCustomerAsync(customer.Id))"><i class="oi oi-plus"></i></a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+} 
+else
+{
+    <span>Hittade inga inaktiva kunder.</span>
+}
+@code {
+    [Inject] ICustomerService CustomerService { get; set; }
+    [Inject] IToastService Toast { get; set; }
+    protected CustomerInfo[] Customers;
+
+    protected async override Task OnInitializedAsync() => await GetData();
+
+    private async Task GetData()
+    {
+        Customers = null;
+        var response = await CustomerService.GetAllInactiveCustomersAsync();
+        if (response.Success)
+            Customers = response.Entity.OrderBy(c => c.Registered).ToArray();
+        StateHasChanged();
+    }
+
+    private async Task ActivateCustomerAsync(string id)
+    {
+        if (!int.TryParse(id, out int parsedId)) return;
+        var result = await CustomerService.ActivateCustomerAsync(parsedId);
+
+        if (!result.Success)
+        {
+            Toast.ShowError("Lyckades inte återaktivera kunden", "Hoppsan!");
+            return;
+        }
+        Toast.ShowSuccess("Kuden återaktiverad", "Sparat");
+        await GetData();
+    }
+}

@@ -1,6 +1,10 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 html, body {
+    /*font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
+}
+
+h1, h2, h3, h4, h5, h6 {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
@@ -10,17 +14,23 @@ html, body {
     vertical-align: top;
 }
 .table td { vertical-align: middle; }
-
 a, .btn-link {
     color: #0366d6;
 }
 
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
+.btn { border: 0; }
+
+.btn-primary, .btn-primary:hover, .btn-primary:active {
+    background-color: #557cd1;
+}
+.btn-success, .btn-success:hover, .btn-success:active {
+    background-color: #55d17c;
+}
+.btn-danger, .btn-danger:hover, .btn-danger:active {
+    background-color: #d16565;
 }
 
+/* bulk css */
 .content {
     padding-top: 1.1rem;
 }

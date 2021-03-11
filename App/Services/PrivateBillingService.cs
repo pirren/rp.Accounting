@@ -98,5 +98,18 @@ namespace rp.Accounting.App.Services
 
             return new TResponse<FileInfo>(new FileInfo(parser.FileName, parser.URL));
         }
+
+        public async Task<TResponse<PrivateBillingInfo>> RemoveItemAsync(int billingBaseId, int customerId)
+        {
+            var billingBase = await repo.GetBillingByIdAsync(billingBaseId);
+            if (billingBase is null) return new TResponse<PrivateBillingInfo>(ServiceCode.NotFound);
+
+            try
+            {
+                billingBase.RemoveCustomer(customerId);
+                await repo.CompleteAsync();
+                return new TResponse<PrivateBillingInfo>(billingBase.ToDto());
+            } catch { return new TResponse<PrivateBillingInfo>(ServiceCode.InternalServerError); }
+        }
     }
 }

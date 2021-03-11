@@ -8,6 +8,7 @@ namespace rp.Accounting.App.Services.Interfaces
     public interface ICustomerService
     {
         Task<TResponse<CustomerInfo[]>> GetAllCustomersAsync();
+        Task<TResponse<CustomerInfo[]>> GetAllInactiveCustomersAsync();
         Task<TResponse<CustomerInfo[]>> GetPrivateCustomersAsync();
         Task<TResponse<CustomerInfo[]>> GetCompanyCustomersAsync();
         Task<TResponse<CustomerInfo>> GetCustomerByIdAsync(int id);

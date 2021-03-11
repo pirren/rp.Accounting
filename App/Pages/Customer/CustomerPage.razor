@@ -31,6 +31,10 @@
         </tbody>
     </table>
 }
+else
+{
+    <span>Hittade inga kunder.</span>
+}
 @code {
     [Inject] ICustomerService CustomerService { get; set; }
     protected CustomerInfo[] Customers;
@@ -39,8 +43,6 @@
     {
         var response = await CustomerService.GetAllCustomersAsync();
         if (response.Success)
-        {
-            Customers = response.Entity;
-        }
+            Customers = response.Entity.OrderBy(c => c.Registered).ToArray();
     }
 }

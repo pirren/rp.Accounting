@@ -1,4 +1,6 @@
-﻿namespace rp.Accounting.App.Models.InfoModels
+﻿using System;
+
+namespace rp.Accounting.App.Models.InfoModels
 {
     public class PrivateBillingItemInfo
     {

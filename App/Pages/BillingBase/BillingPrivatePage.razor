@@ -1,7 +1,9 @@
 ﻿@page "/billing/private"
 
 <h3>Privat fakturaunderlag</h3>
-<PageInfo Content="Fakturaunderlag för privata kunder, ifall du har ändrat på kunduppgifter, eller tagit bort kunder, kan du uppdatera hela underlaget med knappen 'Läs om innehåll' längst ner. Sparat innehåll kommer inte skadas av detta." />
+
+<PageInfo Content="Fakturaunderlag för privata kunder. Ifall du har ändrat på kunduppgifter, eller tagit bort kunder så kan du uppdatera hela underlaget med knappen 'Läs om innehåll' längst ner. Sparad data kommer inte skadas av detta." />
+<p class="h5">Notera att decimaltal måste anges i formatet <mark>5,5</mark>.</p>
 @if (BillingBase is null)
 {
     <span>Hittade inget underlag.</span>
@@ -21,6 +23,7 @@ else
                     <th>Ex. moms</th>
                     <th>Ink. moms</th>
                     <th>Efter rut</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -36,8 +39,21 @@ else
                         <td>@item.ExVAT</td>
                         <td>@item.IncVAT</td>
                         <td>@item.AfterRUT</td>
+                        <td><a role="button" href="" @onclick:preventDefault class="btn btn-sm btn-danger" @onclick="(() => RemoveCustomerAsync(item.Id))"><i class="oi oi-x"></i></a></td>
                     </tr>
                 }
+                <tr>
+                    <td class="font-weight-bold">Totalt</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="font-weight-bold">@TotalExVAT</td>
+                    <td class="font-weight-bold">@TotalIncVAT</td>
+                    <td class="font-weight-bold">@TotalAfterRUT</td>
+                    <td></td>
+                </tr>
             </tbody>
         </table>
         <div class="form-group mt-3">
@@ -56,11 +72,20 @@ else
     private PrivateBillingInfo BillingBase;
     private int Id;
 
-    protected async override Task OnInitializedAsync()
+    private double TotalExVAT;
+    private double TotalIncVAT;
+    private double TotalAfterRUT;
+
+    protected async override Task OnInitializedAsync() => await LoadData();
+
+    private async Task LoadData()
     {
         var result = await BillingService.GetCurrentBillingAsync();
         Id = result.Entity.Id;
         BillingBase = result.Entity;
+        BillingBase.Items = BillingBase.Items.OrderBy(i => i.FirstName).ToList();
+        UpdateTotal();
+        StateHasChanged();
     }
 
     private void UpdateValues(PrivateBillingItemInfo item)
@@ -69,7 +94,22 @@ else
         item.ExVAT = totalHours * item.PricePerHour;
         item.IncVAT = item.ExVAT * 1.25;
         item.AfterRUT = item.IncVAT / 2;
+        UpdateTotal();
         StateHasChanged();
+    }
+
+    private void UpdateTotal()
+    {
+        var allItems = BillingBase.Items;
+
+        var exVatList = allItems.Where(i => i.ExVAT > 0).Select(s => s.ExVAT).ToList();
+        TotalExVAT = exVatList.Any() ? exVatList.Aggregate((x, y) => x + y) : 0.0;
+
+        var incVatList = allItems.Where(i => i.IncVAT > 0).Select(s => s.IncVAT).ToList();
+        TotalIncVAT = incVatList.Any() ? incVatList.Aggregate((x, y) => x + y) : 0.0;
+
+        var afterRutList = allItems.Where(i => i.AfterRUT > 0).Select(s => s.AfterRUT).ToList();
+        TotalAfterRUT = afterRutList.Any() ? afterRutList.Aggregate((x, y) => x + y) : 0.0;
     }
 
     private bool ParseSendData()
@@ -128,10 +168,23 @@ else
         var result = await BillingService.GetExcelSheetAsync(Id);
         if (!result.Success)
         {
-            ToastService.ShowInfo("Kunde inte exportera excelfil", "Något gick snett");
+            ToastService.ShowError("Kunde inte exportera excelfil", "Något gick snett");
             return;
         }
 
         ToastService.ShowInfo(result.Entity.FileName, "Underlag redo");
+    }
+
+    private async void RemoveCustomerAsync(int id)
+    {
+        var result = await BillingService.RemoveItemAsync(Id, id);
+        if (!result.Success)
+        {
+            ToastService.ShowInfo("Kunde inte ta bort kund", "Något gick snett");
+            return;
+        }
+
+        ToastService.ShowSuccess("Kund borttagen från underlag", "Ändringar sparade");
+        await LoadData();
     }
 }

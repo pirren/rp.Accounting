@@ -56,6 +56,16 @@ namespace rp.Accounting.App.Services
             return new TResponse<CustomerInfo[]>(mapped);
         }
 
+        public async Task<TResponse<CustomerInfo[]>> GetAllInactiveCustomersAsync()
+        {
+            var result = await repo.GetInactiveCustomers();
+            var mapped = result.Select(c => c.ToDto()).ToArray();
+
+            if (mapped.Length == 0)
+                return new TResponse<CustomerInfo[]>(ServiceCode.NoContent);
+            return new TResponse<CustomerInfo[]>(mapped);
+        }
+
         public async Task<TResponse<CustomerInfo[]>> GetCompanyCustomersAsync()
         {
             var result = await repo.GetCompanyCustomers();
