@@ -35,7 +35,8 @@ namespace rp.Accounting.App
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IPrivateBillingRepository, PrivateBillingRepository>();
             services.AddScoped<IPrivateBillingService, PrivateBillingService>();
-            //services.AddScoped<IXMLParser, XMLParser>();
+            services.AddScoped<ICompanyBillingRepository, CompanyBillingRepository>();
+            services.AddScoped<ICompanyBillingService, CompanyBillingService>();
             services.AddDbContext<RpContext>(opt => opt.UseSqlite("Data Source=rp.Accounting.db"));
         }
 
