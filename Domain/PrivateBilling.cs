@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace rp.Accounting.Domain
 {
-    public class PrivateBilling : IIdentifier, TBilling
+    public class PrivateBilling : IBilling, IIdentifier
     {
         public int Id { get; private set; }
         public DateTime Date { get; private set; } = DateTime.Now;
@@ -44,12 +44,12 @@ namespace rp.Accounting.Domain
         /// <summary>
         /// Clears out inactive customers from the BillingBase
         /// </summary>
-        /// <param name="inactiveCustomers">List of inactive customers</param>
+        /// <param name="customers">List of inactive customers</param>
         /// <returns>Cleared BillingBase</returns>
-        public PrivateBilling ClearInactiveCustomers(List<Customer> inactiveCustomers)
+        public PrivateBilling ClearInactiveCustomers(List<Customer> customers)
         {
-            if (inactiveCustomers is null) return this;
-            foreach (var customer in inactiveCustomers.Where(c => this.Items.Select(p => p.Customer.Id).Contains(c.Id)))
+            if (customers is null) return this;
+            foreach (var customer in customers.Where(c => this.Items.Select(p => p.Customer.Id).Contains(c.Id)))
             {
                 var obj = Items.Where(e => e.Customer == customer).FirstOrDefault();
                 Items.Remove(obj);
@@ -87,10 +87,10 @@ namespace rp.Accounting.Domain
         }
     }
 
-    public class PrivateBillingItem : TBillingItem, IIdentifier
+    public class PrivateBillingItem : IBillingItem, IIdentifier
     {
         public int Id { get; private set; }
-        public PrivateBilling PrivateBillingBase { get; private set; }
+        public PrivateBilling PrivateBilling { get; private set; }
         public Customer Customer { get; private set; }
         public string WeeksAttended { get; set; } = "";
         public int AmountOccassions { get; set; }
@@ -120,14 +120,14 @@ namespace rp.Accounting.Domain
         public PrivateBillingItem(PrivateBilling billingBase, Customer customer)
         {
             Customer = customer;
-            PrivateBillingBase = billingBase;
+            PrivateBilling = billingBase;
         }
 
         public PrivateBillingItem(int id, PrivateBilling privateBillingBase, Customer customer)
         {
             Id = id;
             Customer = customer;
-            PrivateBillingBase = privateBillingBase;
+            PrivateBilling = privateBillingBase;
         }
     }
 }

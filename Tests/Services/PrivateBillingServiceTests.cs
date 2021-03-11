@@ -120,5 +120,47 @@ namespace rp.Accounting.Tests.Services
             Assert.True(result.Code == ServiceCode.NotFound);
         }
         #endregion
+
+        #region RemoveItemAsync Tests
+        [Fact]
+        public async Task RemoveItemAsync_BadBillingId_ReturnsNotFound()
+        {
+            // arrange
+            var repo = new Mock<IPrivateBillingRepository>();
+            var billings = seedHelper.GetQueryablePrivateBillingMockSet();
+            var id = 99;
+            repo.Setup(s => s.GetBillingByIdAsync(id)).ReturnsAsync(billings.FirstOrDefault(f => f.Id == id));
+            var service = new PrivateBillingService(repo.Object);
+
+            // act
+            var result = await service.RemoveItemAsync(id, 1);
+
+            // assert
+            Assert.IsType<TResponse<PrivateBillingInfo>>(result);
+            Assert.Null(result.Entity);
+            Assert.False(result.Success);
+            Assert.True(result.Code == ServiceCode.NotFound);
+        }
+
+        [Fact]
+        public async Task RemoveItemAsync_SuccessfullRemove_ReturnsSuccessResponse()
+        {
+            // arrange
+            var repo = new Mock<IPrivateBillingRepository>();
+            var billings = seedHelper.GetQueryablePrivateBillingMockSet();
+            var id = 1;
+            repo.Setup(s => s.GetBillingByIdAsync(id)).ReturnsAsync(billings.FirstOrDefault(f => f.Id == id));
+            var service = new PrivateBillingService(repo.Object);
+
+            // act
+            var result = await service.RemoveItemAsync(id, 1);
+
+            // assert
+            Assert.IsType<TResponse<PrivateBillingInfo>>(result);
+            Assert.NotNull(result.Entity);
+            Assert.True(result.Success);
+            Assert.True(result.Code == ServiceCode.Ok);
+        }
+        #endregion
     }
 }

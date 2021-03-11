@@ -51,8 +51,7 @@ namespace rp.Accounting.App.Services
             var result = await repo.GetAllCustomers();
             var mapped = result.Select(c => c.ToDto()).ToArray();
 
-            if (mapped.Length == 0)
-                return new TResponse<CustomerInfo[]>(ServiceCode.NoContent);
+            if (mapped.Length == 0) return new TResponse<CustomerInfo[]>(ServiceCode.NoContent);
             return new TResponse<CustomerInfo[]>(mapped);
         }
 
@@ -61,8 +60,7 @@ namespace rp.Accounting.App.Services
             var result = await repo.GetInactiveCustomers();
             var mapped = result.Select(c => c.ToDto()).ToArray();
 
-            if (mapped.Length == 0)
-                return new TResponse<CustomerInfo[]>(ServiceCode.NoContent);
+            if (mapped.Length == 0) return new TResponse<CustomerInfo[]>(ServiceCode.NoContent);
             return new TResponse<CustomerInfo[]>(mapped);
         }
 
@@ -71,8 +69,7 @@ namespace rp.Accounting.App.Services
             var result = await repo.GetCompanyCustomers();
             var mapped = result.Select(c => c.ToDto()).ToArray();
 
-            if (mapped.Length == 0)
-                return new TResponse<CustomerInfo[]>(ServiceCode.NoContent);
+            if (mapped.Length == 0) return new TResponse<CustomerInfo[]>(ServiceCode.NoContent);
             return new TResponse<CustomerInfo[]>(mapped);
         }
 
@@ -91,8 +88,7 @@ namespace rp.Accounting.App.Services
             var result = await repo.GetPrivateCustomers();
             var mapped = result.Select(c => c.ToDto()).ToArray();
 
-            if (mapped.Length == 0)
-                return new TResponse<CustomerInfo[]>(ServiceCode.NoContent);
+            if (mapped.Length == 0) return new TResponse<CustomerInfo[]>(ServiceCode.NoContent);
             return new TResponse<CustomerInfo[]>(mapped);
         }
 
@@ -120,8 +116,7 @@ namespace rp.Accounting.App.Services
             existingCustomer.Email = request.Email;
             if (request.TypeIsPrivate)
             {
-                if (double.TryParse(request.HourlyFee, out double hourly))
-                    existingCustomer.UpdateHourlyPrice(hourly);
+                if (double.TryParse(request.HourlyFee, out double hourly)) existingCustomer.UpdateHourlyPrice(hourly);
                 existingCustomer.LastName = request.LastName;
             }
 

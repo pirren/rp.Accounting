@@ -22,7 +22,7 @@ namespace rp.Accounting.App.Services
         public async Task<TResponse<PrivateBillingInfo>> SyncBillingItemsAsync(int billingBaseId)
         {
             var billingBase = await repo.GetBillingByIdAsync(billingBaseId);
-            if (billingBase == null) return new TResponse<PrivateBillingInfo>(ServiceCode.NotFound);
+            if (billingBase is null) return new TResponse<PrivateBillingInfo>(ServiceCode.NotFound);
 
             var customers = await repo.GetPrivateCustomers();
             var inactiveCustomers = await repo.GetPrivateInactiveCustomers();
@@ -44,7 +44,7 @@ namespace rp.Accounting.App.Services
         public async Task<TResponse<PrivateBillingInfo>> GetCurrentBillingAsync()
         {
             var billingBase = await repo.GetCurrentBillingAsync();
-            if (billingBase != null) return new TResponse<PrivateBillingInfo>(billingBase.ToDto());
+            if (billingBase is not null) return new TResponse<PrivateBillingInfo>(billingBase.ToDto());
 
             var privateCustomers = await repo.GetPrivateCustomers();
             var newBillingBase = new PrivateBilling()

@@ -19,7 +19,7 @@ namespace rp.Accounting.XMLParsing
         /// Builds an excel sheet from any BillingBase type
         /// </summary>
         /// <param name="billing"></param>
-        public bool BuildBillingXML(TBilling billing)
+        public bool BuildBillingXML(IBilling billing)
         {
             URL = @$"{BASEURL}\{billing.Date:yyyy-MMM}";
 
