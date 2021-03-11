@@ -12,6 +12,11 @@ namespace rp.Accounting.App.Infrastructure
     {
         public CompanyBillingRepository(RpContext ctx) : base(ctx) { }
 
+        public Task<CompanyBilling> GetBillingByDateAsync(DateTime date, Type type)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<CompanyBilling> GetBillingByIdAsync(int id)
             => await ctx.CompanyBillings.Where(s => s.Id == id)
                 .Include(i => i.Items)
@@ -28,9 +33,7 @@ namespace rp.Accounting.App.Infrastructure
                 .FirstOrDefaultAsync();
         }
 
-        public Task<CompanyBilling> GetEarlierBillingAsync(DateTime date, Type type)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<DateTime[]> GetAllBillingDatesAsync()
+            => await ctx.CompanyBillings.Select(s => s.Date).ToArrayAsync();
     }
 }

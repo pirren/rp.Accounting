@@ -162,5 +162,44 @@ namespace rp.Accounting.Tests.Services
             Assert.True(result.Code == ServiceCode.Ok);
         }
         #endregion
+
+        #region GetAllBillingDatesAsync Tests
+        [Fact]
+        public async Task GetAllBillingDatesAsync_ExistingBillings_ReturnsSuccessResponse()
+        {
+            // arrange
+            var repo = new Mock<IPrivateBillingRepository>();
+            var billings = seedHelper.GetQueryablePrivateBillingMockSet();
+            repo.Setup(s => s.GetAllBillingDatesAsync()).ReturnsAsync(billings.Select(s => s.Date).ToArray());
+            var service = new PrivateBillingService(repo.Object);
+
+            // act
+            var result = await service.GetAllBillingDatesAsync();
+
+            // assert
+            Assert.IsType<TResponse<DateTime[]>>(result);
+            Assert.NotNull(result.Entity);
+            Assert.True(result.Success);
+            Assert.True(result.Entity.Length == billings.Count);
+        }
+
+        [Fact]
+        public async Task GetAllBillingDatesAsync_NoBillings_ReturnsEmptyArray()
+        {
+            // arrange
+            var repo = new Mock<IPrivateBillingRepository>();
+            repo.Setup(s => s.GetAllBillingDatesAsync()).ReturnsAsync(Array.Empty<DateTime>());
+            var service = new PrivateBillingService(repo.Object);
+
+            // act
+            var result = await service.GetAllBillingDatesAsync();
+
+            // assert
+            Assert.IsType<TResponse<DateTime[]>>(result);
+            Assert.NotNull(result.Entity);
+            Assert.True(result.Success);
+            Assert.True(result.Entity.Length == 0);
+        }
+        #endregion
     }
 }

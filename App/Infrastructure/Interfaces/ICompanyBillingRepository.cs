@@ -9,7 +9,8 @@ namespace rp.Accounting.App.Infrastructure.Interfaces
     public interface ICompanyBillingRepository : ICustomerRepository
     {
         Task<CompanyBilling> GetCurrentBillingAsync();
-        Task<CompanyBilling> GetEarlierBillingAsync(DateTime date, Type type);
+        Task<CompanyBilling> GetBillingByDateAsync(DateTime date, Type type);
         Task<CompanyBilling> GetBillingByIdAsync(int id);
+        Task<DateTime[]> GetAllBillingDatesAsync();
     }
 }

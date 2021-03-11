@@ -1,5 +1,6 @@
 ﻿using rp.Accounting.App.Models.InfoModels;
 using rp.Accounting.App.Services.Communication;
+using System;
 using System.Threading.Tasks;
 
 namespace rp.Accounting.App.Services.Interfaces
@@ -12,5 +13,6 @@ namespace rp.Accounting.App.Services.Interfaces
         Task<TResponse<CompanyBillingInfo>> UpdateBillingAsync(CompanyBillingInfo dto);
         Task<TResponse<CompanyBillingInfo>> RemoveItemAsync(int billingBaseId, int customerId);
         Task<TResponse<FileInfo>> GetExcelSheetAsync(int id);
+        Task<TResponse<DateTime[]>> GetAllBillingDatesAsync();
     }
 }

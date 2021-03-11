@@ -12,7 +12,12 @@ namespace rp.Accounting.App.Services
     public class CompanyBillingService : ICompanyBillingService
     {
         private readonly ICompanyBillingRepository repo;
-        public CompanyBillingService(ICompanyBillingRepository repo) => this.repo = repo;  
+        public CompanyBillingService(ICompanyBillingRepository repo) => this.repo = repo;
+
+        public Task<TResponse<DateTime[]>> GetAllBillingDatesAsync()
+        {
+            throw new NotImplementedException();
+        }
 
         public async Task<TResponse<CompanyBillingInfo>> GetCurrentBillingAsync()
         {

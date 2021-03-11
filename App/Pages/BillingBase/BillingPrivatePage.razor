@@ -1,6 +1,19 @@
 ﻿@page "/billing/private"
 
-<h3>Underlag privat</h3>
+<div class="d-flex flex-row align-content-between">
+    <h3 class="flex-grow-1">Underlag företag</h3>
+    <form>
+        <div class="form-group">
+            <select class="form-control" id="datePicker">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+            </select>
+        </div>
+    </form>
+</div>
 
 <PageInfo Content="Fakturaunderlag för privata kunder. Ifall du har ändrat på kunduppgifter, eller tagit bort kunder så kan du uppdatera hela underlaget med knappen 'Läs om innehåll' längst ner. Sparad data kommer inte skadas av detta." />
 <p class="h5">Notera att decimaltal måste anges i formatet <mark>5,5</mark>.</p>

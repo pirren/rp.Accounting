@@ -111,5 +111,11 @@ namespace rp.Accounting.App.Services
                 return new TResponse<PrivateBillingInfo>(billingBase.ToDto());
             } catch { return new TResponse<PrivateBillingInfo>(ServiceCode.InternalServerError); }
         }
+
+        public async Task<TResponse<DateTime[]>> GetAllBillingDatesAsync()
+        {
+            var dates = await repo.GetAllBillingDatesAsync();
+            return new TResponse<DateTime[]>(dates);
+        }
     }
 }
