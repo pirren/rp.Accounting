@@ -1,66 +1,67 @@
 ﻿@page "/customer/edit/{CustomerId}"
 
 <h3>Ändra kunduppgifter</h3>
+<PageInfo Content="Här kan du ändra kunduppgifter. Om en kund är inaktiverad kommer kunden inte längre dyka upp i nya fakturaunderlag." />
 @if (Request is null)
 {
     <text>Inga kunduppgifter har hittats.</text>
 }
 else if (Request.Active)
 {
-<EditForm Model="@Request" OnValidSubmit="(async () => await TryPost())">
-    <DataAnnotationsValidator />
-    <div class="form-row">
-        <div class="col">
-            <label for="FirstName">Förnamn:</label>
-            <InputText @bind-Value="@Request.FirstName" class="form-control" id="FirstName" placeholder="Förnamn" />
-            <small id="FirstNameHelp" class="form-text text-muted">För företagskunder ange företagsnamnet.</small>
-            <ValidationMessage For="@(() => Request.FirstName)" />
+    <EditForm Model="@Request" OnValidSubmit="(async () => await TryPost())">
+        <DataAnnotationsValidator />
+        <div class="form-row">
+            <div class="col">
+                <label for="FirstName">Förnamn:</label>
+                <InputText @bind-Value="@Request.FirstName" class="form-control" id="FirstName" placeholder="Förnamn" />
+                <small id="FirstNameHelp" class="form-text text-muted">För företagskunder ange företagsnamnet.</small>
+                <ValidationMessage For="@(() => Request.FirstName)" />
+            </div>
+            @if (Request.TypeIsPrivate)
+            {
+                <div class="col">
+                    <label for="LastName">Efternamn:</label>
+                    <InputText @bind-Value="@Request.LastName" class="form-control" id="LastName" placeholder="Efternamn" />
+                    <small id="LastNameHelp" class="form-text text-muted">Kundens efternamn.</small>
+                    <ValidationMessage For="@(() => Request.LastName)" />
+                </div>
+            }
+            else
+            {
+                <div class="col"></div>
+            }
+        </div>
+        <div class="form-row">
+            <div class="col">
+                <label for="Address">Address:</label>
+                <InputText @bind-Value="@Request.Address" class="form-control" id="Address" placeholder="Address" />
+                <small id="AddressHelp" class="form-text text-muted">Addressen till kund eller företag.</small>
+                <ValidationMessage For="@(() => Request.Address)" />
+            </div>
+            <div class="col">
+                <label for="Email">E-mail:</label>
+                <InputText @bind-Value="@Request.Email" class="form-control" id="Email" placeholder="E-mail" />
+                <small id="EmailHelp" class="form-text text-muted">E-mail för kund eller företag.</small>
+                <ValidationMessage For="@(() => Request.Email)" />
+            </div>
         </div>
         @if (Request.TypeIsPrivate)
         {
-            <div class="col">
-                <label for="LastName">Efternamn:</label>
-                <InputText @bind-Value="@Request.LastName" class="form-control" id="LastName" placeholder="Efternamn" />
-                <small id="LastNameHelp" class="form-text text-muted">Kundens efternamn.</small>
-                <ValidationMessage For="@(() => Request.LastName)" />
+            <div class="form-row">
+                <div class="col">
+                    <label for="HourlyFee">Timpris:</label>
+                    <InputText @bind-Value="@Request.HourlyFee" class="form-control" id="HourlyFee" placeholder="Timpris" />
+                    <small id="HourlyFeeHelp" class="form-text text-muted">Anges inte för företag.</small>
+                    <ValidationMessage For="@(() => Request.HourlyFee)" />
+                </div>
+                <div class="col"></div>
             </div>
         }
-        else
-        {
-            <div class="col"></div>
-        }
-    </div>
-    <div class="form-row">
-        <div class="col">
-            <label for="Address">Address:</label>
-            <InputText @bind-Value="@Request.Address" class="form-control" id="Address" placeholder="Address" />
-            <small id="AddressHelp" class="form-text text-muted">Addressen till kund eller företag.</small>
-            <ValidationMessage For="@(() => Request.Address)" />
+        <div class="form-group mt-3">
+            <button type="submit" class="btn btn-primary">Spara förändringar <i class="oi oi-check"></i></button>
+            <a role="button" href="" @onclick:preventDefault class="btn btn-danger" @onclick="(() => InactivateCustomer())">Inaktivera kund <i class="oi oi-x"></i></a>
         </div>
-        <div class="col">
-            <label for="Email">E-mail:</label>
-            <InputText @bind-Value="@Request.Email" class="form-control" id="Email" placeholder="E-mail" />
-            <small id="EmailHelp" class="form-text text-muted">E-mail för kund eller företag.</small>
-            <ValidationMessage For="@(() => Request.Email)" />
-        </div>
-    </div>
-    @if (Request.TypeIsPrivate)
-    {
-        <div class="form-row">
-            <div class="col">
-                <label for="HourlyFee">Timpris:</label>
-                <InputText @bind-Value="@Request.HourlyFee" class="form-control" id="HourlyFee" placeholder="Timpris" />
-                <small id="HourlyFeeHelp" class="form-text text-muted">Anges inte för företag.</small>
-                <ValidationMessage For="@(() => Request.HourlyFee)" />
-            </div>
-            <div class="col"></div>
-        </div>
-    }
-    <div class="form-group mt-3">
-        <button type="submit" class="btn btn-primary">Spara förändringar <i class="oi oi-check"></i></button>
-        <button type="submit" class="btn btn-danger">Inaktivera kund <i class="oi oi-x"></i></button>
-    </div>
-</EditForm>
+    </EditForm>
 }
 else
 {
@@ -94,6 +95,13 @@ else
             ToastService.ShowSuccess("Ändringarna sparade!", "Sparat!");
         else
             ToastService.ShowError("Något verkar ha gått snett.", "Hoppsan!");
-        Nav.NavigateTo("customer/all"); 
+        Nav.NavigateTo("customer/all");
+    }
+
+    private async Task InactivateCustomer()
+    {
+        var result = await CustomerService.InactivateCustomerAsync(id);
+        if (result.Success) ToastService.ShowSuccess("Kunden har inaktiverats", "Sparat!");
+        Nav.NavigateTo("customer/all");
     }
 }

@@ -61,7 +61,7 @@ namespace rp.Accounting.Tests.Services
 
         #region SyncBillingItemsAsync Tests
         [Fact]
-        public async Task SyncBillingItemsAsync_BadParameter_ReturnsNoSuccess()
+        public async Task SyncBillingItemsAsync_BadId_ReturnsNoSuccess()
         {
             // arrange
             var repo = new Mock<IPrivateBillingRepository>();
@@ -77,6 +77,47 @@ namespace rp.Accounting.Tests.Services
             Assert.IsType<TResponse<PrivateBillingInfo>>(result);
             Assert.Null(result.Entity);
             Assert.False(result.Success);
+        }
+        #endregion
+
+        #region UpdateBillingAsync Tests
+        [Fact]
+        public async Task UpdateBillingAsync_SuccessfulUpdate_ReturnsSuccessResponse()
+        {
+            // arrange
+            var repo = new Mock<IPrivateBillingRepository>();
+            var billings = seedHelper.GetQueryablePrivateBillingMockSet();
+            var request = billings[0].ToDto();
+            repo.Setup(s => s.GetBillingByIdAsync(request.Id)).ReturnsAsync(billings.FirstOrDefault(f => f.Id == request.Id));
+            var service = new PrivateBillingService(repo.Object);
+
+            // act
+            var result = await service.UpdateBillingAsync(request);
+
+            // assert
+            Assert.IsType<TResponse<PrivateBillingInfo>>(result);
+            Assert.NotNull(result.Entity);
+            Assert.True(result.Success);
+        }
+
+        [Fact]
+        public async Task UpdateBillingAsync_BadId_ReturnsNotFoundResponse()
+        {
+            // arrange
+            var repo = new Mock<IPrivateBillingRepository>();
+            var billings = seedHelper.GetQueryablePrivateBillingMockSet();
+            var request = billings[0].ToDto();
+            repo.Setup(s => s.GetBillingByIdAsync(99)).ReturnsAsync(billings.Where(b => b.Id == 99).FirstOrDefault());
+            var service = new PrivateBillingService(repo.Object);
+
+            // act
+            var result = await service.UpdateBillingAsync(request);
+
+            // assert
+            Assert.IsType<TResponse<PrivateBillingInfo>>(result);
+            Assert.Null(result.Entity);
+            Assert.False(result.Success);
+            Assert.True(result.Code == ServiceCode.NotFound);
         }
         #endregion
     }

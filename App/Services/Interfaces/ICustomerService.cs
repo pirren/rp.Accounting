@@ -13,5 +13,7 @@ namespace rp.Accounting.App.Services.Interfaces
         Task<TResponse<CustomerInfo>> GetCustomerByIdAsync(int id);
         Task<TResponse<object>> UpdateCustomerAsync(int id, CustomerRequest request);
         Task<TResponse<object>> AddCustomerAsync(CustomerRequest request);
+        Task<TResponse<CustomerInfo>> InactivateCustomerAsync(int id);
+        Task<TResponse<CustomerInfo>> ActivateCustomerAsync(int id);
     }
 }

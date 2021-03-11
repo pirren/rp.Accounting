@@ -232,5 +232,95 @@ namespace rp.Accounting.Tests.Services
             Assert.Null(result.Entity);
         }
         #endregion
+
+        #region InactivateCustomerAsync Tests
+        [Fact]
+        public async Task InactivateCustomerAsync_BadId_ReturnsNotFound()
+        {
+            // arrange
+            var repo = new Mock<ICustomerRepository>();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
+            int id = 99;
+            repo.Setup(s => s.GetCustomerById(id))
+                .ReturnsAsync(customers.FirstOrDefault(c => c.Id == id));
+            var service = new CustomerService(repo.Object);
+
+            // act
+            var result = await service.InactivateCustomerAsync(id);
+
+            // assert
+            Assert.IsType<TResponse<CustomerInfo>>(result);
+            Assert.False(result.Success);
+            Assert.True(result.Code == ServiceCode.NotFound);
+            Assert.Null(result.Entity);
+        }
+
+        [Fact]
+        public async Task InactivateCustomerAsync_SuccessfullInactivate_ReturnsSuccessResponse()
+        {
+            // arrange
+            var repo = new Mock<ICustomerRepository>();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
+            int id = 1;
+            repo.Setup(s => s.GetCustomerById(id))
+                .ReturnsAsync(customers.FirstOrDefault(c => c.Id == id));
+            var service = new CustomerService(repo.Object);
+
+            // act
+            var result = await service.InactivateCustomerAsync(id);
+
+            // assert
+            Assert.IsType<TResponse<CustomerInfo>>(result);
+            Assert.True(result.Success);
+            Assert.True(result.Code == ServiceCode.Ok);
+            Assert.NotNull(result.Entity);
+            Assert.False(result.Entity.Active);
+        }
+        #endregion
+
+        #region ActivateCustomerAsync Tests
+        [Fact]
+        public async Task ActivateCustomerAsync_BadId_ReturnsNotFound()
+        {
+            // arrange
+            var repo = new Mock<ICustomerRepository>();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
+            int id = 99;
+            repo.Setup(s => s.GetCustomerById(id))
+                .ReturnsAsync(customers.FirstOrDefault(c => c.Id == id));
+            var service = new CustomerService(repo.Object);
+
+            // act
+            var result = await service.ActivateCustomerAsync(id);
+
+            // assert
+            Assert.IsType<TResponse<CustomerInfo>>(result);
+            Assert.False(result.Success);
+            Assert.True(result.Code == ServiceCode.NotFound);
+            Assert.Null(result.Entity);
+        }
+
+        [Fact]
+        public async Task ActivateCustomerAsync_SuccessfullActivate_ReturnsSuccessResponse()
+        {
+            // arrange
+            var repo = new Mock<ICustomerRepository>();
+            var customers = seedHelper.GetQueryableCustomerMockSet();
+            int id = 1;
+            repo.Setup(s => s.GetCustomerById(id))
+                .ReturnsAsync(customers.FirstOrDefault(c => c.Id == id));
+            var service = new CustomerService(repo.Object);
+
+            // act
+            var result = await service.ActivateCustomerAsync(id);
+
+            // assert
+            Assert.IsType<TResponse<CustomerInfo>>(result);
+            Assert.True(result.Success);
+            Assert.True(result.Code == ServiceCode.Ok);
+            Assert.NotNull(result.Entity);
+            Assert.True(result.Entity.Active);
+        }
+        #endregion
     }
 }

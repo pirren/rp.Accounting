@@ -67,6 +67,7 @@ namespace rp.Accounting.App.Services
         public async Task<TResponse<PrivateBillingInfo>> UpdateBillingAsync(PrivateBillingInfo dto)
         {
             var billingBase = await repo.GetBillingByIdAsync(dto.Id);
+            if (billingBase is null) return new TResponse<PrivateBillingInfo>(ServiceCode.NotFound);
             foreach (var item in billingBase.Items)
             {
                 var dtoItem = dto.Items.Where(s => s.Id == item.Id).FirstOrDefault();

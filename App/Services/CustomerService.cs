@@ -17,6 +17,20 @@ namespace rp.Accounting.App.Services
             this.repo = repo;
         }
 
+        public async Task<TResponse<CustomerInfo>> ActivateCustomerAsync(int id)
+        {
+            var customer = await repo.GetCustomerById(id);
+            if (customer is null) return new TResponse<CustomerInfo>(ServiceCode.NotFound);
+
+            try
+            {
+                customer.Active = true;
+                await repo.CompleteAsync();
+                return new TResponse<CustomerInfo>(customer.ToDto());
+            }
+            catch { return new TResponse<CustomerInfo>(ServiceCode.InternalServerError); }
+        }
+
         public async Task<TResponse<object>> AddCustomerAsync(CustomerRequest request)
         {
             try
@@ -70,6 +84,19 @@ namespace rp.Accounting.App.Services
             if (mapped.Length == 0)
                 return new TResponse<CustomerInfo[]>(ServiceCode.NoContent);
             return new TResponse<CustomerInfo[]>(mapped);
+        }
+
+        public async Task<TResponse<CustomerInfo>> InactivateCustomerAsync(int id)
+        {
+            var customer = await repo.GetCustomerById(id);
+            if (customer is null) return new TResponse<CustomerInfo>(ServiceCode.NotFound);
+
+            try
+            {
+                customer.Active = false;
+                await repo.CompleteAsync();
+                return new TResponse<CustomerInfo>(customer.ToDto());
+            } catch { return new TResponse<CustomerInfo>(ServiceCode.InternalServerError); }
         }
 
         public async Task<TResponse<object>> UpdateCustomerAsync(int id, CustomerRequest request)
