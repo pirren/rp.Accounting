@@ -1,11 +1,19 @@
-# Rent Personligt Accounting
+# rp Accounting
 [![CI](https://github.com/pirren/rp.Accounting/actions/workflows/CI.yml/badge.svg)](https://github.com/pirren/rp.Accounting/actions/workflows/CI.yml)
 
-En bokföringsapplikation för ett småföretag. Projektet är cross-platform Blazor Desktop som använder ElectronNET. Appen använder ett integrerat API, SQLite för datalagring och byggt med domän-driven design i tankarna.
+## Om projektet 
+rp.Accounting är en bokföringsapplikation för ett småföretag, byggt i Blazor Desktop miljö. Appen använder ett integrerat API för dataöverföring och SQLite för datalagring. Den är cross-platform via ElectronNET skal. För mig är detta ett pilotprojekt för Domän-driven design.
 
-Användaren ska få autogenererade formulär för bokföringsunderlag som ska gå att exporteras till excel-ark. 
+Målet för användaren är att spara tid genom autogenererade formulär och en kontinuerligt uppdaterad kunddatabas.
 
-Användning och kompileringskommandon: 
+## Användning
+Användaren vill ha autogenererade formulär för bokföringsunderlag. Det finns olika typer av formulär. Varje månad genereras ett nytt formulär upp och baseras på kundregistret, och alla formulär sparas. 
+
+Det finns möjlighet att exportera formulären till excelfiler.
+
+
+
+*Lathund, kompileringskommandon för ElectronNET:*
 ```
 electronize init
 electronize start
