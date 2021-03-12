@@ -137,7 +137,7 @@ else
         StateHasChanged();
     }
 
-    void GoToBilling(ChangeEventArgs e)
+    private void GoToBilling(ChangeEventArgs e)
     {
         var date = e.Value.ToString();
         Nav.NavigateTo($"/billing/private/{date}");
