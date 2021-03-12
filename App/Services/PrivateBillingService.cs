@@ -59,9 +59,11 @@ namespace rp.Accounting.App.Services
             catch { return new TResponse<PrivateBillingInfo>(ServiceCode.InternalServerError); }
         }
 
-        public Task<TResponse<PrivateBillingInfo>> GetEarlierBillingAsync(int year, int month)
+        public async Task<TResponse<PrivateBillingInfo>> GetEarlierBillingAsync(int year, int month)
         {
-            throw new NotImplementedException();
+            var result = await repo.GetBillingByDateAsync(year, month);
+            if (result is null) return new TResponse<PrivateBillingInfo>(ServiceCode.NotFound);
+            return new TResponse<PrivateBillingInfo>(result.ToDto());
         }
 
         public async Task<TResponse<PrivateBillingInfo>> UpdateBillingAsync(PrivateBillingInfo dto)

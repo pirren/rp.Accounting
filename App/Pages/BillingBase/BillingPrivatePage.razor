@@ -1,18 +1,22 @@
 ﻿@page "/billing/private"
+@page "/billing/private/{Date}"
+@implements IDisposable
 
 <div class="d-flex flex-row align-content-between">
-    <h3 class="flex-grow-1">Underlag företag</h3>
-    <form>
-        <div class="form-group">
-            <select class="form-control" id="datePicker">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-            </select>
-        </div>
-    </form>
+    <h3 class="flex-grow-1">Underlag privat</h3>
+    @if (HistoryBillings is not null)
+    {
+        <form>
+            <div class="form-group">
+                <select @onchange="@GoToBilling" class="form-control" id="datePicker">
+                    @foreach (var opt in HistoryBillings)
+                    {
+                        <option>@opt.ToString("yyyy-MMM")</option>
+                    }
+                </select>
+            </div>
+        </form>
+    }
 </div>
 
 <PageInfo Content="Fakturaunderlag för privata kunder. Ifall du har ändrat på kunduppgifter, eller tagit bort kunder så kan du uppdatera hela underlaget med knappen 'Läs om innehåll' längst ner. Sparad data kommer inte skadas av detta." />
@@ -79,27 +83,64 @@ else
 }
 
 @code {
+    [Parameter] public string Date { get; set; }
+
     [Inject] IPrivateBillingService BillingService { get; set; }
     [Inject] IToastService ToastService { get; set; }
     [Inject] NavigationManager Nav { get; set; }
 
     private PrivateBillingInfo BillingBase;
+    private List<DateTime> HistoryBillings;
     private int Id;
+    private string PickedDate;
 
     private double TotalExVAT;
     private double TotalIncVAT;
     private double TotalAfterRUT;
 
-    protected async override Task OnInitializedAsync() => await LoadData();
+    protected async override Task OnInitializedAsync()
+    {
+        await LoadData();
+        Nav.LocationChanged += HandleLocationChanged;
+    }
+
+    private async void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        if (Nav.ToBaseRelativePath(Nav.Uri).StartsWith("billing/private"))
+            await LoadData();
+    }
+
+    public void Dispose() => Nav.LocationChanged -= HandleLocationChanged;
 
     private async Task LoadData()
     {
-        var result = await BillingService.GetCurrentBillingAsync();
-        Id = result.Entity.Id;
-        BillingBase = result.Entity;
+        var historyResult = await BillingService.GetAllBillingDatesAsync();
+        HistoryBillings = historyResult.Entity.ToList();
+
+        if (string.IsNullOrEmpty(Date))
+        {
+            PickedDate = DateTime.Now.ToString("yyyy-MMM");
+            var billingResult = await BillingService.GetCurrentBillingAsync();
+            Id = billingResult.Entity.Id;
+            BillingBase = billingResult.Entity;
+        }
+        if (DateTime.TryParse(Date, out DateTime d))
+        {
+            PickedDate = Date;
+            var billingResult = await BillingService.GetEarlierBillingAsync(d.Year, d.Month);
+            Id = billingResult.Entity.Id;
+            BillingBase = billingResult.Entity;
+        }
+
         BillingBase.Items = BillingBase.Items.OrderBy(i => i.FirstName).ToList();
         UpdateTotal();
         StateHasChanged();
+    }
+
+    void GoToBilling(ChangeEventArgs e)
+    {
+        var date = e.Value.ToString();
+        Nav.NavigateTo($"/billing/private/{date}");
     }
 
     private void UpdateValues(PrivateBillingItemInfo item)

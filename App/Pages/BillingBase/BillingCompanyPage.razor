@@ -42,8 +42,8 @@ else
                 <tr>
                     <td>@($"{item.Name}")</td>
                     <td>@item.Email</td>
-                    <td><InputText @bind-Value="@item.ExVAT" class="form-control" placeholder="Noteringar" /></td>
                     <td><InputText @bind-Value="@item.Notes" class="form-control" placeholder="" /></td>
+                    <td><InputText @bind-Value="@item.ExVAT" class="form-control" placeholder="Noteringar" /></td>
                     <td>@item.IncVAT</td>
                     <td><a role="button" href="" @onclick:preventDefault class="btn btn-sm btn-danger" @onclick="(() => RemoveCustomerAsync(item.Id))"><i class="oi oi-x"></i></a></td>
                 </tr>

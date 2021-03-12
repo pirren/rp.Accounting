@@ -31,12 +31,19 @@ namespace rp.Accounting.App.Infrastructure
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<PrivateBilling> GetBillingByDateAsync(DateTime date, Type type)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<PrivateBilling> GetBillingByDateAsync(int year, int month)
+            => await ctx.PrivateBillings
+                .Where(p => p.Date.Year == year && p.Date.Month == month)
+                .Include(i => i.Items)
+                .ThenInclude(i => i.Customer)
+                .FirstOrDefaultAsync();
 
         public async Task<DateTime[]> GetAllBillingDatesAsync()
-            => await ctx.PrivateBillings.Select(s => s.Date).ToArrayAsync();
+            => await ctx.PrivateBillings
+                .AsNoTracking()
+                .OrderByDescending(s => s.Date)
+                .Select(s => s.Date)
+                .Take(12)
+                .ToArrayAsync();
     }
 }

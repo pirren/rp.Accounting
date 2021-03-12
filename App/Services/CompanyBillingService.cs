@@ -37,9 +37,11 @@ namespace rp.Accounting.App.Services
             catch { return new TResponse<CompanyBillingInfo>(ServiceCode.InternalServerError); }
         }
 
-        public Task<TResponse<CompanyBillingInfo>> GetEarlierBillingAsync(int year, int month)
+        public async Task<TResponse<CompanyBillingInfo>> GetEarlierBillingAsync(int year, int month)
         {
-            throw new NotImplementedException();
+            var result = await repo.GetBillingByDateAsync(year, month);
+            if (result is null) return new TResponse<CompanyBillingInfo>(ServiceCode.NotFound);
+            return new TResponse<CompanyBillingInfo>(result.ToDto());
         }
 
         public Task<TResponse<FileInfo>> GetExcelSheetAsync(int id)

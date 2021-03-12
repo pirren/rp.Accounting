@@ -12,7 +12,7 @@ namespace rp.Accounting.App.Infrastructure
     {
         public CompanyBillingRepository(RpContext ctx) : base(ctx) { }
 
-        public Task<CompanyBilling> GetBillingByDateAsync(DateTime date, Type type)
+        public Task<CompanyBilling> GetBillingByDateAsync(int year, int month)
         {
             throw new NotImplementedException();
         }
