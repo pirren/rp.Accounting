@@ -12,10 +12,12 @@ namespace rp.Accounting.App.Infrastructure
     {
         public CompanyBillingRepository(RpContext ctx) : base(ctx) { }
 
-        public Task<CompanyBilling> GetBillingByDateAsync(int year, int month)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<CompanyBilling> GetBillingByDateAsync(int year, int month)
+            => await ctx.CompanyBillings
+                .Where(p => p.Date.Year == year && p.Date.Month == month)
+                .Include(i => i.Items)
+                .ThenInclude(i => i.Customer)
+                .FirstOrDefaultAsync();
 
         public async Task<CompanyBilling> GetBillingByIdAsync(int id)
             => await ctx.CompanyBillings.Where(s => s.Id == id)
@@ -34,6 +36,11 @@ namespace rp.Accounting.App.Infrastructure
         }
 
         public async Task<DateTime[]> GetAllBillingDatesAsync()
-            => await ctx.CompanyBillings.Select(s => s.Date).ToArrayAsync();
+            => await ctx.CompanyBillings
+                .AsNoTracking()
+                .OrderByDescending(s => s.Date)
+                .Select(s => s.Date)
+                .Take(12)
+                .ToArrayAsync();
     }
 }

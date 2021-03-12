@@ -4,7 +4,9 @@ using rp.Accounting.App.Models.InfoModels;
 using rp.Accounting.App.Services.Communication;
 using rp.Accounting.App.Services.Interfaces;
 using rp.Accounting.Domain;
+using rp.Accounting.XMLParsing;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace rp.Accounting.App.Services
@@ -14,9 +16,10 @@ namespace rp.Accounting.App.Services
         private readonly ICompanyBillingRepository repo;
         public CompanyBillingService(ICompanyBillingRepository repo) => this.repo = repo;
 
-        public Task<TResponse<DateTime[]>> GetAllBillingDatesAsync()
+        public async Task<TResponse<DateTime[]>> GetAllBillingDatesAsync()
         {
-            throw new NotImplementedException();
+            var dates = await repo.GetAllBillingDatesAsync();
+            return new TResponse<DateTime[]>(dates);
         }
 
         public async Task<TResponse<CompanyBillingInfo>> GetCurrentBillingAsync()
@@ -44,24 +47,68 @@ namespace rp.Accounting.App.Services
             return new TResponse<CompanyBillingInfo>(result.ToDto());
         }
 
-        public Task<TResponse<FileInfo>> GetExcelSheetAsync(int id)
+        public async Task<TResponse<FileInfo>> GetExcelSheetAsync(int id)
         {
-            throw new NotImplementedException();
+            var billingBase = await repo.GetBillingByIdAsync(id);
+            if (billingBase is null) return new TResponse<FileInfo>(ServiceCode.NotFound);
+
+            var parser = new XMLBuilder();
+            if (!parser.BuildBillingXML(billingBase)) return new TResponse<FileInfo>(ServiceCode.InternalServerError);
+
+            return new TResponse<FileInfo>(new FileInfo(parser.FileName, parser.URL));
         }
 
-        public Task<TResponse<CompanyBillingInfo>> RemoveItemAsync(int billingBaseId, int customerId)
+        public async Task<TResponse<CompanyBillingInfo>> RemoveItemAsync(int billingBaseId, int customerId)
         {
-            throw new NotImplementedException();
+            var billingBase = await repo.GetBillingByIdAsync(billingBaseId);
+            if (billingBase is null) return new TResponse<CompanyBillingInfo>(ServiceCode.NotFound);
+
+            try
+            {
+                billingBase.RemoveCustomer(customerId);
+                await repo.CompleteAsync();
+                return new TResponse<CompanyBillingInfo>(billingBase.ToDto());
+            }
+            catch { return new TResponse<CompanyBillingInfo>(ServiceCode.InternalServerError); }
         }
 
-        public Task<TResponse<CompanyBillingInfo>> SyncBillingItemsAsync(int billingBaseId)
+        public async Task<TResponse<CompanyBillingInfo>> SyncBillingItemsAsync(int billingBaseId)
         {
-            throw new NotImplementedException();
+            var billingBase = await repo.GetBillingByIdAsync(billingBaseId);
+            if (billingBase is null) return new TResponse<CompanyBillingInfo>(ServiceCode.NotFound);
+
+            var customers = await repo.GetCompanyCustomers();
+            var inactiveCustomers = await repo.GetCompanyInactiveCustomers();
+            try
+            {
+                billingBase.ClearInactiveCustomers(inactiveCustomers)
+                    .EnterUnhousedCustomers(customers);
+                await repo.CompleteAsync();
+                return new TResponse<CompanyBillingInfo>(billingBase.ToDto());
+            }
+            catch { return new TResponse<CompanyBillingInfo>(ServiceCode.InternalServerError); }
         }
 
-        public Task<TResponse<CompanyBillingInfo>> UpdateBillingAsync(CompanyBillingInfo dto)
+        public async Task<TResponse<CompanyBillingInfo>> UpdateBillingAsync(CompanyBillingInfo dto)
         {
-            throw new NotImplementedException();
+            var billingBase = await repo.GetBillingByIdAsync(dto.Id);
+            if (billingBase is null) return new TResponse<CompanyBillingInfo>(ServiceCode.NotFound);
+            foreach (var item in billingBase.Items)
+            {
+                var dtoItem = dto.Items.Where(s => s.Id == item.Id).FirstOrDefault();
+                if (dtoItem is null) continue;
+                item.Notes = dtoItem.Notes;
+                item.ExVAT = int.Parse(dtoItem.ExVAT);
+                item.CalculatePrice();
+            }
+
+            try
+            {
+                repo.Update(billingBase);
+                await repo.CompleteAsync();
+                return new TResponse<CompanyBillingInfo>(billingBase.ToDto());
+            }
+            catch { return new TResponse<CompanyBillingInfo>(ServiceCode.InternalServerError); }
         }
     }
 }

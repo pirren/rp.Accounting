@@ -28,21 +28,25 @@ namespace rp.Accounting.XMLParsing
                 FileName = $"fakturaunderlag_privat_{billing.Date:yyyy-MMM}.xlsx";
                 return BuildPrivateXML(privateBilling);
             }
+            if (billing is CompanyBilling companyBilling)
+            {
+                FileName = $"fakturaunderlag_företag_{billing.Date:yyyy-MMM}.xlsx";
+                return BuildCompanyXML(companyBilling);
+            }
             return false;
         }
 
         private bool BuildPrivateXML(PrivateBilling billing)
         {
             using var workbook = new XLWorkbook();
-            var ws = workbook.Worksheets.Add($"Privat underlag {billing.Date:yyyy-MMM}");
+            var ws = workbook.Worksheets.Add($"Underlag private {billing.Date:yyyy-MMM}");
             var privateSheet = new PrivateXMLSheet { Worksheet = ws };
             
             int rowNumber = 0;
-            var allItems = billing.Items.ToList();
+            //var allItems = billing.Items.ToList();
             privateSheet.BuildHeader();
-            privateSheet.BuildItems(allItems, ref rowNumber);
-            privateSheet.BuildTotal(allItems, ref rowNumber);
-
+            privateSheet.BuildItems(billing.Items, ref rowNumber);
+            privateSheet.BuildTotal(billing.Items, ref rowNumber);
             ws.Columns("A", "I").AdjustToContents();
 
             try
@@ -50,6 +54,27 @@ namespace rp.Accounting.XMLParsing
                 workbook.SaveAs($"{URL}/{FileName}");
                 return true;
             } catch { return false;  }
+        }
+
+        private bool BuildCompanyXML(CompanyBilling billing)
+        {
+            using var workbook = new XLWorkbook();
+            var ws = workbook.Worksheets.Add($"Underlag företag {billing.Date:yyyy-MMM}");
+            var privateSheet = new CompanyXMLSheet { Worksheet = ws };
+
+            int rowNumber = 0;
+            //var allItems = billing.Items.ToList();
+            privateSheet.BuildHeader();
+            privateSheet.BuildItems(billing.Items, ref rowNumber);
+            privateSheet.BuildTotal(billing.Items, ref rowNumber);
+            ws.Columns("A", "E").AdjustToContents();
+
+            try
+            {
+                workbook.SaveAs($"{URL}/{FileName}");
+                return true;
+            }
+            catch { return false; }
         }
     }
 }

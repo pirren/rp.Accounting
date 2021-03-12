@@ -1,18 +1,22 @@
 ﻿@page "/billing/company"
+@page "/billing/company/{Date}"
+@implements IDisposable
 
 <div class="d-flex flex-row align-content-between">
     <h3 class="flex-grow-1">Underlag företag</h3>
-    <form>
-        <div class="form-group">
-            <select class="form-control" id="datePicker">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-            </select>
-        </div>
-    </form>
+    @if (HistoryBillings is not null)
+    {
+        <form>
+            <div class="form-group">
+                <select @onchange="@GoToBilling" class="form-control" id="datePicker">
+                    @foreach (var opt in HistoryBillings)
+                    {
+                        <option>@opt.ToString("yyyy-MMM")</option>
+                    }
+                </select>
+            </div>
+        </form>
+    }
 </div>
 
 <PageInfo Content="Fakturaunderlag för privata kunder. Ifall du har ändrat på kunduppgifter, eller tagit bort kunder så kan du uppdatera hela underlaget med knappen 'Läs om innehåll' längst ner. Sparad data kommer inte skadas av detta." />
@@ -39,14 +43,14 @@ else
             <tbody>
                 @foreach (var item in BillingBase.Items)
                 {
-                <tr>
-                    <td>@($"{item.Name}")</td>
-                    <td>@item.Email</td>
-                    <td><InputText @bind-Value="@item.Notes" class="form-control" placeholder="" /></td>
-                    <td><InputText @bind-Value="@item.ExVAT" class="form-control" placeholder="Noteringar" /></td>
-                    <td>@item.IncVAT</td>
-                    <td><a role="button" href="" @onclick:preventDefault class="btn btn-sm btn-danger" @onclick="(() => RemoveCustomerAsync(item.Id))"><i class="oi oi-x"></i></a></td>
-                </tr>
+                    <tr>
+                        <td>@($"{item.Name}")</td>
+                        <td>@item.Email</td>
+                        <td><InputText @bind-Value="@item.Notes" class="form-control" placeholder="" /></td>
+                        <td><InputText @bind-Value="@item.ExVAT" @onblur="(() => UpdateValues(item))" class="form-control" placeholder="Noteringar" /></td>
+                        <td>@item.IncVAT</td>
+                        <td><a role="button" href="" @onclick:preventDefault class="btn btn-sm btn-danger" @onclick="(() => RemoveCustomerAsync(item.Id))"><i class="oi oi-x"></i></a></td>
+                    </tr>
                 }
                 <tr>
                     <td class="font-weight-bold">Totalt</td>
@@ -67,45 +71,155 @@ else
 }
 
 @code {
+    [Parameter] public string Date { get; set; }
+
     [Inject] ICompanyBillingService BillingService { get; set; }
     [Inject] IToastService ToastService { get; set; }
     [Inject] NavigationManager Nav { get; set; }
 
     private CompanyBillingInfo BillingBase;
+    private List<DateTime> HistoryBillings;
     private int Id;
+    private string PickedDate;
 
     private double TotalExVAT;
     private double TotalIncVAT;
+    private double TotalAfterRUT;
 
-    protected async override Task OnInitializedAsync() => await LoadData();
+    protected async override Task OnInitializedAsync()
+    {
+        await LoadData();
+        Nav.LocationChanged += HandleLocationChanged;
+    }
+
+    private async void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        if (Nav.ToBaseRelativePath(Nav.Uri).StartsWith("billing/company"))
+            await LoadData();
+    }
+
+    public void Dispose() => Nav.LocationChanged -= HandleLocationChanged;
 
     private async Task LoadData()
     {
-        var result = await BillingService.GetCurrentBillingAsync();
-        Id = result.Entity.Id;
-        BillingBase = result.Entity;
-        BillingBase.Items = BillingBase.Items.OrderBy(i => i.Name).ToList();
-        //UpdateTotal();
+        var historyResult = await BillingService.GetAllBillingDatesAsync();
+        HistoryBillings = historyResult.Entity.ToList();
+
+        if (string.IsNullOrEmpty(Date))
+        {
+            PickedDate = DateTime.Now.ToString("yyyy-MMM");
+            var billingResult = await BillingService.GetCurrentBillingAsync();
+            Id = billingResult.Entity.Id;
+            BillingBase = billingResult.Entity;
+        }
+        if (DateTime.TryParse(Date, out DateTime d))
+        {
+            PickedDate = Date;
+            var billingResult = await BillingService.GetEarlierBillingAsync(d.Year, d.Month);
+            Id = billingResult.Entity.Id;
+            BillingBase = billingResult.Entity;
+        }
+        SortItems();
+        UpdateTotal();
         StateHasChanged();
     }
 
-    private async Task TrySaveAsync()
+    private void SortItems() => BillingBase.Items = BillingBase.Items.OrderBy(i => i.Name).ToList();
+
+    private void GoToBilling(ChangeEventArgs e)
     {
-        throw new NotImplementedException();
+        var date = e.Value.ToString();
+        Nav.NavigateTo($"/billing/company/{date}");
     }
 
-    private async Task RemoveCustomerAsync(int id)
+    private void UpdateValues(CompanyBillingItemInfo item)
     {
-        throw new NotImplementedException();
+        if (!double.TryParse(item.ExVAT, out double ExVAT)) return;
+
+        item.IncVAT = ExVAT * 1.25;
+        UpdateTotal();
+        StateHasChanged();
     }
 
-    private async Task SyncBillingBaseAsync()
+    private void UpdateTotal()
     {
-        throw new NotImplementedException();
+        var allItems = BillingBase.Items;
+
+        var exVatList = allItems.Where(s => double.TryParse(s.ExVAT, out double _)).Select(s => double.Parse(s.ExVAT)).ToList();
+        TotalExVAT = exVatList.Any() ? exVatList.Aggregate((x, y) => x + y) : 0.0;
+
+        var incVatList = allItems.Where(i => i.IncVAT > 0).Select(s => s.IncVAT).ToList();
+        TotalIncVAT = incVatList.Any() ? incVatList.Aggregate((x, y) => x + y) : 0.0;
     }
 
-    private async Task TryDownloadExcelAsync()
+    private bool ParseSendData()
     {
-        throw new NotImplementedException();
+        foreach (var item in BillingBase.Items)
+        {
+            if (!double.TryParse(item.ExVAT, out double _))
+            {
+                ToastService.ShowWarning("\"Totala timmar\" på ett eller flera fält är fel format, måste anges numeriskt", "Oj");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private async Task<bool> TrySaveAsync(bool showToast = true)
+    {
+        if (!ParseSendData()) return false;
+        var result = await BillingService.UpdateBillingAsync(BillingBase);
+        if (!result.Success)
+        {
+            if (showToast) ToastService.ShowWarning("Lyckades inte spara", "Ajdå");
+            return false;
+        }
+        if (showToast) ToastService.ShowSuccess("Fakturaunderlaget sparades", "Perfekt");
+        BillingBase = result.Entity;
+        SortItems();
+        StateHasChanged();
+        return true;
+    }
+
+    private async void SyncBillingBaseAsync()
+    {
+        var result = await BillingService.SyncBillingItemsAsync(Id);
+        if (result.Success)
+        {
+            ToastService.ShowInfo("Fakturaunderlaget uppdaterades", "Info");
+            BillingBase = result.Entity;
+            SortItems();
+            StateHasChanged();
+        }
+        else ToastService.ShowWarning("Lyckades inte uppdatera", "Ajdå");
+    }
+
+    private async void TryDownloadExcelAsync()
+    {
+        if (!await TrySaveAsync(false))
+        {
+            ToastService.ShowWarning("Kunde inte spara dokumentet innan nedladdning", "Ajdå");
+            return;
+        }
+        var result = await BillingService.GetExcelSheetAsync(Id);
+        if (!result.Success)
+        {
+            ToastService.ShowError("Kunde inte exportera excelfil", "Något gick snett");
+            return;
+        }
+
+        ToastService.ShowInfo(result.Entity.FileName, "Underlag redo");
+    }
+
+    private async void RemoveCustomerAsync(int id)
+    {
+        var result = await BillingService.RemoveItemAsync(Id, id);
+        if (!result.Success)
+        {
+            ToastService.ShowInfo("Kunde inte ta bort kund", "Något gick snett");
+            return;
+        }
+        ToastService.ShowSuccess("Kund borttagen från underlag", "Ändringar sparade");
+        await LoadData();
     }
 }

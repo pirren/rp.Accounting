@@ -14,10 +14,7 @@ namespace rp.Accounting.App.Services
     public class PrivateBillingService : IPrivateBillingService
     {
         private readonly IPrivateBillingRepository repo;
-        public PrivateBillingService(IPrivateBillingRepository repo)
-        {
-            this.repo = repo;
-        }
+        public PrivateBillingService(IPrivateBillingRepository repo) => this.repo = repo;
 
         public async Task<TResponse<PrivateBillingInfo>> SyncBillingItemsAsync(int billingBaseId)
         {

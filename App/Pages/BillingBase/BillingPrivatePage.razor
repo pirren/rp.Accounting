@@ -131,11 +131,12 @@ else
             Id = billingResult.Entity.Id;
             BillingBase = billingResult.Entity;
         }
-
-        BillingBase.Items = BillingBase.Items.OrderBy(i => i.FirstName).ToList();
+        SortItems();
         UpdateTotal();
         StateHasChanged();
     }
+
+    private void SortItems() => BillingBase.Items = BillingBase.Items.OrderBy(i => i.LastName).ToList();
 
     private void GoToBilling(ChangeEventArgs e)
     {
@@ -196,6 +197,7 @@ else
         }
         if (showToast) ToastService.ShowSuccess("Fakturaunderlaget sparades", "Perfekt");
         BillingBase = result.Entity;
+        SortItems();
         StateHasChanged();
         return true;
     }
@@ -207,10 +209,10 @@ else
         {
             ToastService.ShowInfo("Fakturaunderlaget uppdaterades", "Info");
             BillingBase = result.Entity;
+            SortItems();
+            StateHasChanged();
         }
-        else
-            ToastService.ShowWarning("Lyckades inte uppdatera", "Ajdå");
-        StateHasChanged();
+        else ToastService.ShowWarning("Lyckades inte uppdatera", "Ajdå");
     }
 
     private async void TryDownloadExcelAsync()

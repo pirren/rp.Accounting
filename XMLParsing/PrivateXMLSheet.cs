@@ -26,7 +26,7 @@ namespace rp.Accounting.XMLParsing
             Worksheet.Cell("I1").SetValue("Efter rut");
         }
 
-        public void BuildItems<T>(List<T> items, ref int rowNumber) where T : class
+        public void BuildItems<T>(IEnumerable<T> items, ref int rowNumber) where T : class
         {
             var allItems = items.Cast<PrivateBillingItem>().ToList();
             for (int i = 0; i < allItems.Count; i++)
@@ -45,7 +45,7 @@ namespace rp.Accounting.XMLParsing
             }
         }
 
-        public void BuildTotal<T>(List<T> items, ref int rowNumber) where T : class
+        public void BuildTotal<T>(IEnumerable<T> items, ref int rowNumber) where T : class
         {
             var allItems = items.Cast<PrivateBillingItem>().ToList();
 
