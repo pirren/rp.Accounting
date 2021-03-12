@@ -31,5 +31,17 @@ namespace rp.Accounting.Tests.TestHelpers
 
             return new List<PrivateBilling> { billing1, billing2 };
         }
+
+        public List<CompanyBilling> GetQueryableCompanyBillingMockSet()
+        {
+            var customers = GetQueryableCustomerMockSet();
+
+            var billing1 = new CompanyBilling(1);
+            var billing2 = new CompanyBilling(2);
+            billing1.PopulateNew(customers.Where(c => c.Type == CustomerType.Company && c.Active).ToList());
+            billing2.PopulateNew(customers.Where(c => c.Type == CustomerType.Company && c.Active).ToList());
+
+            return new List<CompanyBilling> { billing1, billing2 };
+        }
     }
 }
