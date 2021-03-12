@@ -5,6 +5,7 @@ using rp.Accounting.DataAccess;
 using rp.Accounting.Domain;
 using rp.Accounting.Tests.TestHelpers;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -103,7 +104,58 @@ namespace rp.Accounting.Tests.Infrastructure
             // assert
             Assert.IsType<DateTime[]>(result);
             Assert.True(result.Length == 0);
-        } 
+        }
+        #endregion
+
+        #region GetBillingByDateAsync Tests
+        [Fact]
+        public async Task GetBillingByDateAsync_ExistingBillings_ReturnsCorrectObject()
+        {
+            // arrange
+            var ctx = new Mock<RpContext>();
+            var billingBases = seedHelper.GetQueryablePrivateBillingMockSet();
+            var (year, month) = (billingBases.First().Date.Year, billingBases.First().Date.Month);
+            ctx.Setup(s => s.PrivateBillings).ReturnsDbSet(billingBases);
+            var repo = new PrivateBillingRepository(ctx.Object);
+
+            // act
+            var result = await repo.GetBillingByDateAsync(year, month);
+
+            // assert
+            Assert.IsType<PrivateBilling>(result);
+            Assert.True(result.Date.Month == month && result.Date.Year == year);
+        }
+
+        [Fact]
+        public async Task GetBillingByDateAsync_NoBillings_ReturnsNull()
+        {
+            // arrange
+            var ctx = new Mock<RpContext>();
+            ctx.Setup(s => s.PrivateBillings).ReturnsDbSet(Array.Empty<PrivateBilling>());
+            var repo = new PrivateBillingRepository(ctx.Object);
+
+            // act
+            var result = await repo.GetBillingByDateAsync(1700, 1);
+
+            // assert
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetBillingByDateAsync_BadDate_ReturnsNull()
+        {
+            // arrange
+            var ctx = new Mock<RpContext>();
+            var billingBases = seedHelper.GetQueryablePrivateBillingMockSet();
+            ctx.Setup(s => s.PrivateBillings).ReturnsDbSet(billingBases);
+            var repo = new PrivateBillingRepository(ctx.Object);
+
+            // act
+            var result = await repo.GetBillingByDateAsync(1700, 1);
+
+            // assert
+            Assert.Null(result);
+        }
         #endregion
     }
 }

@@ -201,5 +201,71 @@ namespace rp.Accounting.Tests.Services
             Assert.True(result.Entity.Length == 0);
         }
         #endregion
+
+        #region GetEarlierBillingAsync Tests
+        [Fact]
+        public async Task GetEarlierBillingAsync_ExistingBilling_ReturnsSuccessResponse()
+        {
+            // arrange
+            var repo = new Mock<IPrivateBillingRepository>();
+            var billings = seedHelper.GetQueryablePrivateBillingMockSet();
+            var (year, month) = (billings.First().Date.Year, billings.First().Date.Month);
+            repo.Setup(s => s.GetBillingByDateAsync(year, month)).ReturnsAsync(
+                billings.Where(b => b.Date.Year == year && b.Date.Month == month).FirstOrDefault()
+            );
+            var service = new PrivateBillingService(repo.Object);
+
+            // act
+            var result = await service.GetEarlierBillingAsync(year, month);
+
+            // assert
+            Assert.IsType<TResponse<PrivateBillingInfo>>(result);
+            Assert.NotNull(result.Entity);
+            Assert.True(result.Success);
+            Assert.True(result.Entity.Date.Year == year && result.Entity.Date.Month == month);
+        }
+
+        [Fact]
+        public async Task GetEarlierBillingAsync_NoBilling_ReturnsNoSuccess()
+        {
+            // arrange
+            var repo = new Mock<IPrivateBillingRepository>();
+            var billings = new List<PrivateBilling>();
+            var (year, month) = (1970, 1);
+            repo.Setup(s => s.GetBillingByDateAsync(year, month)).ReturnsAsync(
+                billings.Where(b => b.Date.Year == year && b.Date.Month == month).FirstOrDefault()
+            );
+            var service = new PrivateBillingService(repo.Object);
+
+            // act
+            var result = await service.GetEarlierBillingAsync(year, month);
+
+            // assert
+            Assert.IsType<TResponse<PrivateBillingInfo>>(result);
+            Assert.Null(result.Entity);
+            Assert.False(result.Success);
+        }
+
+        [Fact]
+        public async Task GetEarlierBillingAsync_BadDate_ReturnsNoSuccess()
+        {
+            // arrange
+            var repo = new Mock<IPrivateBillingRepository>();
+            var billings = seedHelper.GetQueryablePrivateBillingMockSet();
+            var (year, month) = (1970, 1);
+            repo.Setup(s => s.GetBillingByDateAsync(year, month)).ReturnsAsync(
+                billings.Where(b => b.Date.Year == year && b.Date.Month == month).FirstOrDefault()
+            );
+            var service = new PrivateBillingService(repo.Object);
+
+            // act
+            var result = await service.GetEarlierBillingAsync(year, month);
+
+            // assert
+            Assert.IsType<TResponse<PrivateBillingInfo>>(result);
+            Assert.Null(result.Entity);
+            Assert.False(result.Success);
+        } 
+        #endregion
     }
 }
