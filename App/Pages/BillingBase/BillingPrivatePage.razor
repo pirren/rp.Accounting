@@ -6,7 +6,7 @@
     <h3 class="flex-grow-1">Underlag privat</h3>
     @if (HistoryBillings is not null)
     {
-        <form>
+        <form class="ml-auto">
             <div class="form-group">
                 <select @onchange="@GoToBilling" class="form-control" id="datePicker">
                     @foreach (var opt in HistoryBillings)
@@ -19,9 +19,7 @@
     }
 </div>
 
-<PageInfo Content="Fakturaunderlag för privata kunder. Ifall du har ändrat på kunduppgifter, eller tagit bort kunder så kan du uppdatera hela underlaget med knappen 'Läs om innehåll' längst ner. Sparad data kommer inte skadas av detta." />
-<p class="h5">Notera att decimaltal måste anges i formatet <mark>5,5</mark>.</p>
-
+<p class="my-3">Fakturaunderlag för privata kunder. Ifall du har ändrat på kunduppgifter eller tagit bort kunder så kan du uppdatera underlaget med knappen <b>'Läs om innehåll'</b> längst ner. Sparad data kommer inte skadas av detta.</p>
 @if (BillingBase is null)
 {
     <span>Hittade inget underlag.</span>

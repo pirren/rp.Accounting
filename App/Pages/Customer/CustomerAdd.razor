@@ -45,7 +45,7 @@
         <div class="col">
             <label for="HourlyFee">Timpris:</label>
             <InputText @bind-Value="@Request.HourlyFee" class="form-control" id="HourlyFee" placeholder="Timpris" />
-            <small id="HourlyFeeHelp" class="form-text text-muted">Anges inte för företag.</small>
+            <small id="HourlyFeeHelp" class="form-text text-muted">Behövs inte för företag.</small>
             <ValidationMessage For="@(() => Request.HourlyFee)" />
         </div>
     </div>
